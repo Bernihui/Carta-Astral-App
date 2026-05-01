@@ -1,3 +1,5 @@
+// pages/index.js - v3
+   import { useState } from 'react';
 // pages/index.js
 import { useState } from 'react';
 import Head from 'next/head';
