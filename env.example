@@ -1,0 +1,50 @@
+// pages/api/generate-reading.js
+import Anthropic from '@anthropic-ai/sdk';
+
+export default async function handler(req, res) {
+  // Solo permitir POST
+  if (req.method !== 'POST') {
+    return res.status(405).json({ error: 'Method not allowed' });
+  }
+
+  try {
+    const { prompt } = req.body;
+
+    if (!prompt) {
+      return res.status(400).json({ error: 'Prompt is required' });
+    }
+
+    // Inicializar cliente de Anthropic con la API key
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+
+    // Llamar a Claude
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 2000,
+      messages: [
+        {
+          role: 'user',
+          content: prompt
+        }
+      ],
+    });
+
+    // Extraer el texto de la respuesta
+    const content = message.content
+      .filter(item => item.type === 'text')
+      .map(item => item.text)
+      .join('\n');
+
+    // Devolver la respuesta
+    res.status(200).json({ content });
+
+  } catch (error) {
+    console.error('Error generating reading:', error);
+    res.status(500).json({ 
+      error: 'Error al generar la lectura',
+      details: error.message 
+    });
+  }
+}
