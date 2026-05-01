@@ -171,20 +171,31 @@ Extensión: 600-700 palabras`;
   },
 };
 
-const calculatePlanetaryPositions = (birthDate, birthTime) => {
-  const date = new Date(`${birthDate}T${birthTime}`);
-  const jd = (date.getTime() / 86400000) + 2440587.5;
-  
-  return {
-    sol: (280.466 + 0.9856474 * (jd - 2451545.0)) % 360,
-    luna: (218.316 + 13.176396 * (jd - 2451545.0)) % 360,
-    mercurio: (252.25 + 1.602131 * (jd - 2451545.0)) % 360,
-    venus: (181.98 + 0.524024 * (jd - 2451545.0)) % 360,
-    marte: (355.43 + 0.524070 * (jd - 2451545.0)) % 360,
-    jupiter: (34.35 + 0.083056 * (jd - 2451545.0)) % 360,
-    saturno: (50.08 + 0.033371 * (jd - 2451545.0)) % 360,
-    ascendente: (((date.getHours() + date.getMinutes() / 60) * 15) + 90) % 360,
-  };
+const calculatePlanetaryPositions = async (birthDate, birthTime, city) => {
+  try {
+    const response = await fetch('/api/calculate-chart', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        date: birthDate,
+        time: birthTime,
+        city: city
+      }),
+    });
+
+    if (!response.ok) {
+      const errorData = await response.json();
+      throw new Error(errorData.error || 'Error al calcular posiciones');
+    }
+
+    const data = await response.json();
+    return data.positions;
+  } catch (error) {
+    console.error('Error:', error);
+    throw error;
+  }
 };
 
 const getZodiacSign = (degrees) => {
@@ -208,12 +219,24 @@ export default function Home() {
   const [currentReading, setCurrentReading] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlanetDetails, setShowPlanetDetails] = useState(false);
+  const [isCalculating, setIsCalculating] = useState(false);
+  const [calculationError, setCalculationError] = useState(null);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    const positions = calculatePlanetaryPositions(formData.date, formData.time);
-    setChart(positions);
-    setCurrentView('results');
+    setIsCalculating(true);
+    setCalculationError(null);
+    
+    try {
+      const positions = await calculatePlanetaryPositions(formData.date, formData.time, formData.city);
+      setChart(positions);
+      setCurrentView('results');
+    } catch (error) {
+      setCalculationError(error.message);
+      alert(`Error: ${error.message}\n\nPor favor verifica que la ciudad esté escrita correctamente.`);
+    } finally {
+      setIsCalculating(false);
+    }
   };
 
   const generateReading = async (prompt, title) => {
@@ -631,19 +654,21 @@ export default function Home() {
 
               <button
                 type="submit"
+                disabled={isCalculating}
                 style={{
                   width: '100%',
                   padding: '15px',
-                  background: 'linear-gradient(135deg, #d4af37, #f0c674)',
+                  background: isCalculating ? 'rgba(212, 175, 55, 0.5)' : 'linear-gradient(135deg, #d4af37, #f0c674)',
                   border: 'none',
                   borderRadius: '10px',
                   color: '#1a0b2e',
                   fontSize: '1.1rem',
                   fontWeight: 600,
-                  cursor: 'pointer'
+                  cursor: isCalculating ? 'wait' : 'pointer',
+                  opacity: isCalculating ? 0.7 : 1
                 }}
               >
-                Generar Carta Astral ✨
+                {isCalculating ? 'Calculando posiciones celestiales...' : 'Generar Carta Astral ✨'}
               </button>
             </form>
           </div>
