@@ -1,5 +1,5 @@
-// pages/index.js - v4 FIXED
-   import { useState } from 'react';
+// pages/index.js - v5 UI mejorada
+import { useState } from 'react';
 import Head from 'next/head';
 
 // Sistema de prompts
@@ -196,6 +196,7 @@ export default function Home() {
   const [showChart, setShowChart] = useState(false);
   const [currentReading, setCurrentReading] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
+  const [showPlanetDetails, setShowPlanetDetails] = useState(false);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -269,7 +270,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Carta Astral - Lectura Personalizada</title>
+        <title>Carta Astral - Autoconocimiento</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet" />
       </Head>
@@ -298,7 +299,7 @@ export default function Home() {
             color: '#94a3b8',
             marginBottom: '40px'
           }}>
-            Descubre los secretos escritos en las estrellas ✨
+            Conócete mejor a través de tu configuración natal
           </p>
 
           {!showChart ? (
@@ -440,7 +441,29 @@ export default function Home() {
                 </div>
               </div>
 
-              {Object.entries(chart).map(([planet, degrees]) => {
+              {/* Botón para mostrar/ocultar detalles planetarios */}
+              <button
+                onClick={() => setShowPlanetDetails(!showPlanetDetails)}
+                style={{
+                  width: '100%',
+                  padding: '12px',
+                  marginBottom: '20px',
+                  background: 'rgba(30, 41, 59, 0.6)',
+                  border: '1px solid rgba(148, 163, 184, 0.3)',
+                  borderRadius: '10px',
+                  color: '#cbd5e1',
+                  cursor: 'pointer',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                  gap: '10px'
+                }}
+              >
+                {showPlanetDetails ? '▼' : '▶'} {showPlanetDetails ? 'Ocultar' : 'Ver'} Detalles por Planeta
+              </button>
+
+              {/* Lista de planetas - colapsable */}
+              {showPlanetDetails && Object.entries(chart).map(([planet, degrees]) => {
                 const sign = getZodiacSign(degrees);
                 const deg = (degrees % 30).toFixed(1);
                 
@@ -554,7 +577,7 @@ export default function Home() {
                 {isGenerating ? (
                   <div style={{ textAlign: 'center', padding: '40px' }}>
                     <p style={{ color: '#cbd5e1', fontSize: '1.2rem' }}>
-                      Consultando las estrellas...
+                      Analizando tu configuración...
                     </p>
                   </div>
                 ) : (
