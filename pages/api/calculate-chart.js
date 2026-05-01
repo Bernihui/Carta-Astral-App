@@ -31,22 +31,26 @@ export default async function handler(req, res) {
     const latitude = parseFloat(geoData[0].lat);
     const longitude = parseFloat(geoData[0].lon);
 
-    // 2. Crear fecha y hora en UTC
+    // 2. Crear fecha y hora
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     
+    // Crear objeto Date en timezone local
     const dateTime = new Date(year, month - 1, day, hours, minutes);
+    
+    // Convertir a objeto AstroTime de astronomy-engine
+    const astroTime = Astronomy.MakeTime(dateTime);
     
     // 3. Calcular posiciones planetarias
     const positions = {
-      sol: Astronomy.EclipticLongitude(Astronomy.SunPosition(dateTime)),
-      luna: Astronomy.EclipticLongitude(Astronomy.GeoMoon(dateTime)),
-      mercurio: getPlanetLongitude('Mercury', dateTime),
-      venus: getPlanetLongitude('Venus', dateTime),
-      marte: getPlanetLongitude('Mars', dateTime),
-      jupiter: getPlanetLongitude('Jupiter', dateTime),
-      saturno: getPlanetLongitude('Saturn', dateTime),
-      ascendente: calculateAscendant(dateTime, latitude, longitude)
+      sol: getPlanetEclipticLongitude('Sun', astroTime),
+      luna: getMoonEclipticLongitude(astroTime),
+      mercurio: getPlanetEclipticLongitude('Mercury', astroTime),
+      venus: getPlanetEclipticLongitude('Venus', astroTime),
+      marte: getPlanetEclipticLongitude('Mars', astroTime),
+      jupiter: getPlanetEclipticLongitude('Jupiter', astroTime),
+      saturno: getPlanetEclipticLongitude('Saturn', astroTime),
+      ascendente: calculateAscendant(astroTime, latitude, longitude)
     };
 
     return res.status(200).json({
@@ -68,14 +72,28 @@ export default async function handler(req, res) {
 }
 
 // Helper: Obtener longitud eclíptica de un planeta
-function getPlanetLongitude(planetName, date) {
-  const body = Astronomy.HelioVector(planetName, date);
-  const geo = Astronomy.GeoVector(planetName, date, true);
+function getPlanetEclipticLongitude(bodyName, time) {
+  // Obtener la posición ecuatorial del planeta
+  const equator = Astronomy.Equator(bodyName, time, null, true, true);
   
   // Convertir a coordenadas eclípticas
-  const ecliptic = Astronomy.Ecliptic(geo);
+  const ecliptic = Astronomy.Ecliptic(equator);
+  
+  // La longitud eclíptica ya está en grados 0-360
+  let lon = ecliptic.elon;
   
   // Normalizar a 0-360 grados
+  while (lon < 0) lon += 360;
+  while (lon >= 360) lon -= 360;
+  
+  return lon;
+}
+
+// Helper: Obtener longitud eclíptica de la Luna
+function getMoonEclipticLongitude(time) {
+  const equator = Astronomy.Equator('Moon', time, null, true, true);
+  const ecliptic = Astronomy.Ecliptic(equator);
+  
   let lon = ecliptic.elon;
   while (lon < 0) lon += 360;
   while (lon >= 360) lon -= 360;
@@ -84,32 +102,34 @@ function getPlanetLongitude(planetName, date) {
 }
 
 // Helper: Calcular Ascendente
-function calculateAscendant(date, latitude, longitude) {
-  // Calcular el tiempo sideral local
-  const jd = Astronomy.MakeTime(date).ut;
-  const gmst = Astronomy.SiderealTime(date);
+function calculateAscendant(time, latitude, longitude) {
+  // Obtener el tiempo sideral local en horas
+  const siderealTime = Astronomy.SiderealTime(time);
   
-  // Tiempo sideral local = GMST + longitud
-  let lst = gmst + (longitude / 15.0);
+  // Convertir longitud a horas (15 grados = 1 hora)
+  const localSiderealTime = siderealTime + (longitude / 15.0);
+  
+  // Normalizar a 0-24 horas
+  let lst = localSiderealTime;
   while (lst < 0) lst += 24;
   while (lst >= 24) lst -= 24;
   
-  // Calcular RAMC (Right Ascension of the Midheaven)
-  const ramc = lst * 15; // Convertir horas a grados
+  // Convertir LST a grados (RAMC - Right Ascension of Midheaven)
+  const ramc = lst * 15.0;
   
-  // Calcular ascendente usando fórmula simplificada
-  // Para mayor precisión se debería usar la oblicuidad de la eclíptica
-  const obliquity = 23.4397; // Oblicuidad media de la eclíptica
+  // Oblicuidad de la eclíptica para esta fecha
+  const obliquity = 23.4397; // Aproximación (podría mejorarse con cálculo exacto)
   
+  // Convertir a radianes
   const latRad = latitude * Math.PI / 180;
   const ramcRad = ramc * Math.PI / 180;
   const oblRad = obliquity * Math.PI / 180;
   
-  // Fórmula del ascendente
-  const num = Math.cos(ramcRad);
-  const den = -Math.sin(ramcRad) * Math.cos(oblRad) - Math.tan(latRad) * Math.sin(oblRad);
+  // Fórmula para calcular el ascendente
+  const y = -Math.sin(ramcRad);
+  const x = Math.cos(ramcRad) * Math.cos(oblRad) + Math.tan(latRad) * Math.sin(oblRad);
   
-  let asc = Math.atan2(num, den) * 180 / Math.PI;
+  let asc = Math.atan2(y, x) * 180 / Math.PI;
   
   // Normalizar a 0-360
   while (asc < 0) asc += 360;
