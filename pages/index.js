@@ -32,14 +32,12 @@ La lectura debe ser:
 Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experimentado.`,
 
   completeAnalysis: (chartData, birthData) => {
-    const getZodiacSign = (degrees) => {
-      const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
-                     'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
-      return signs[Math.floor(degrees / 30)];
-    };
+    const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
+                   'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
+    const getSignName = (degrees) => signs[Math.floor(degrees / 30)];
     
     const planetsText = Object.entries(chartData)
-      .map(([planet, degrees]) => `- ${planet}: ${getZodiacSign(degrees)} ${(degrees % 30).toFixed(1)}°`)
+      .map(([planet, degrees]) => `- ${planet}: ${getSignName(degrees)} ${(degrees % 30).toFixed(1)}°`)
       .join('\n');
     
     return `Eres una astróloga experta realizando una lectura profunda de carta natal con enfoque psicológico y transformacional.
