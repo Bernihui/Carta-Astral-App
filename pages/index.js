@@ -1,4 +1,4 @@
-// pages/index.js - v3
+// pages/index.js - v4 FIXED
    import { useState } from 'react';
 // pages/index.js
 import { useState } from 'react';
