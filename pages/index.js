@@ -31,7 +31,7 @@ La lectura debe ser:
 
 Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experimentado.`,
 
-completeAnalysis: (chartData, birthData) => {
+  completeAnalysis: (chartData, birthData) => {
     const getZodiacSign = (degrees) => {
       const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                      'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
@@ -120,37 +120,6 @@ Resume en 1-2 frases la energía central de esta persona
 Usa markdown con ## para títulos principales
 Usa emojis para cada sección (como en el ejemplo)
 Escribe en segunda persona (tú/tu) para crear conexión`;
-  },
-    const getZodiacSign = (degrees) => {
-      const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
-                     'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
-      return signs[Math.floor(degrees / 30)];
-    };
-    
-    const planetsText = Object.entries(chartData)
-      .map(([planet, degrees]) => `- ${planet}: ${getZodiacSign(degrees)} ${(degrees % 30).toFixed(1)}°`)
-      .join('\n');
-    
-    return `Eres un astrólogo experto realizando una lectura completa de carta natal.
-
-Datos del nativo:
-- Fecha de nacimiento: ${birthData.date}
-- Hora: ${birthData.time}
-- Lugar: ${birthData.city}
-
-Configuración planetaria:
-${planetsText}
-
-Realiza un análisis integral de esta carta natal que incluya:
-
-1. **Esencia del Alma (Sol, Luna, Ascendente)**
-2. **Dones y Talentos Naturales**
-3. **Áreas de Trabajo Personal**
-4. **Temas de Vida Principales**
-5. **Síntesis Integradora**
-
-Extensión: 800-1000 palabras
-Tono: Sabio, compasivo, empoderante`;
   },
 
   loveReading: (chartData, birthData) => {
