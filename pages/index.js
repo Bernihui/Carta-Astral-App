@@ -47,137 +47,88 @@ Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experime
     
     return `Actúa como un astrólogo experto con enfoque psicológico y estratégico (NO místico superficial).
 
-Datos de nacimiento:
-- Fecha: ${birthData.date}
-- Hora: ${birthData.time}
-- Lugar: ${birthData.city}
-- Género: ${birthData.gender}
+Datos: ${birthData.date} | ${birthData.time} | ${birthData.city} | ${birthData.gender}
 
-Posiciones planetarias:
-- Sol: ${solSign}
-- Luna: ${lunaSign}
-- Ascendente: ${ascSign}
-- Mercurio: ${mercurioSign}
-- Venus: ${venusSign}
-- Marte: ${marteSign}
+Posiciones: Sol ${solSign} • Luna ${lunaSign} • Asc ${ascSign} • Mercurio ${mercurioSign} • Venus ${venusSign} • Marte ${marteSign}
 
-Construye una lectura de carta astral PROFUNDA, clara y accionable, usando EXACTAMENTE esta estructura:
+Construye una lectura CONCISA pero PROFUNDA (600-700 palabras total). Cada sección debe ser directa, específica y sin relleno.
 
 ---
 
-🌞 Tu esencia: Sol en ${solSign}
+🌞 **Tu esencia: Sol en ${solSign}**
 
-Explica quién es la persona en su núcleo.
-Incluye:
-- Descripción profunda (no genérica)
-- Qué lo mueve internamente
-- Cómo se expresa en su vida real
+En 2-3 frases: quién eres en el núcleo, qué te mueve.
 
-Luego divide en:
-
-**En versión luz:**
-- Fortalezas claras y concretas
-- Cómo se ve esto en la vida laboral y relacional
-
-**En sombra:**
-- Patrones limitantes reales
-- Sesgos emocionales o de comportamiento
+**Luz:** 2 fortalezas concretas
+**Sombra:** 2 patrones limitantes reales
 
 ---
 
-🌙 Tu mundo emocional: Luna en ${lunaSign}
+🌙 **Mundo emocional: Luna en ${lunaSign}**
 
-Describe cómo procesa emociones.
-Incluye:
-- Cómo siente realmente (no lo que muestra)
-- Cómo maneja vínculos
-- Qué necesita para sentirse seguro/a
+Cómo sientes realmente (no lo que muestras). Qué necesitas para sentirte seguro/a.
 
-👉 Cierra con una interpretación integrada del patrón emocional
+👉 1 frase de cierre sobre tu patrón emocional
 
 ---
 
-⬆️ Ascendente: ${ascSign}
+⬆️ **Ascendente: ${ascSign}**
 
-Explica:
-- Cómo lo perciben los demás
-- Qué proyecta en primeras impresiones
-- Diferencia entre imagen externa vs mundo interno
+Cómo te perciben vs. cómo eres por dentro. En 2 frases.
 
 ---
 
-🧠 Tu mente: Mercurio en ${mercurioSign}
+🧠 **Mente: Mercurio en ${mercurioSign}**
 
-Describe:
-- Cómo piensa
-- Cómo comunica
-- Cómo toma decisiones
-
-Bájalo a ejemplos concretos (trabajo, conversaciones, liderazgo)
+Cómo piensas y comunicas. 1 ejemplo concreto (trabajo/conversaciones).
 
 ---
 
-❤️ Amor y vínculos: Venus en ${venusSign}
+❤️ **Amor: Venus en ${venusSign}**
 
-Incluye:
-- Cómo ama
-- Qué valora en relaciones
-- Cómo demuestra afecto
-- Qué le cuesta
-
-Separar en:
-**En relaciones:**
-**Riesgos o patrones:**
+Cómo amas y qué valoras. 1 patrón o riesgo específico.
 
 ---
 
-🔥 Energía y acción: Marte en ${marteSign}
+🔥 **Acción: Marte en ${marteSign}**
 
-Describe:
-- Cómo actúa
-- Qué lo motiva
-- Cómo enfrenta conflicto
-
-Incluye versión luz y sombra
+Qué te motiva y cómo enfrentas conflicto. **Luz** y **sombra** en 1 frase cada una.
 
 ---
 
-🧩 Tema central de la carta
+🧩 **Tema central**
 
-Identifica tensiones clave entre signos/energías del tipo:
-👉 [Energía X] vs [Energía Y]
-
-Explica cómo se vive en la realidad (NO abstracto). Conecta con situaciones concretas de vida.
+👉 [Tensión X vs Y]
+Explica en 2 frases cómo se vive en la realidad.
 
 ---
 
-💡 Lo más potente de esta carta
+💡 **Lo más potente**
 
-Lista 3 insights diferenciadores (NO genéricos). Combinaciones únicas que definen a esta persona.
-
----
-
-⚠️ Desafíos
-
-3-4 puntos claros y accionables. Patrones específicos que generan fricción.
+3 insights únicos (1 línea cada uno)
 
 ---
 
-🧭 En simple: su energía es
+⚠️ **Desafíos**
 
-Una frase resumen potente tipo:
-"[arquetipo claro de la persona basado en toda la configuración]"
+3 patrones claros (1 línea cada uno)
 
 ---
 
-IMPORTANTE:
-- NO uses lenguaje místico vacío
-- NO generalices - quiero PRECISIÓN
+🧭 **En simple**
+
+"[Arquetipo/resumen en 1 frase potente]"
+
+---
+
+**REGLAS CRÍTICAS:**
+- MÁXIMO 700 palabras TOTAL
+- Cero relleno, cero misticismo
+- Lenguaje directo y contemporáneo
 - Conecta TODO con comportamiento real
-- Mantén un tono claro, inteligente y cercano (NO esotérico)
-- Escribe en segunda persona (tú/tu) adaptando según género: ${birthData.gender}
-- 900-1100 palabras
-- Usa ## para títulos y emojis como en el ejemplo`;
+- Usa segunda persona (tú/tu) según género: ${birthData.gender}
+- Usa negritas (**texto**) para énfasis
+- Cada sección BREVE pero PRECISA`;
   },
 
   loveReading: (chartData, birthData) => {
