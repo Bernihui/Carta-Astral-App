@@ -651,126 +651,346 @@ export default function Home() {
 
         {/* RESULTADOS */}
         {currentView === 'results' && (
-          <div style={{ maxWidth: '1200px', margin: '0 auto', padding: '60px 20px' }}>
-            <div style={{ marginBottom: '30px' }}>
-              <button
-                onClick={generateCompleteAnalysis}
-                disabled={isGenerating}
-                style={{
-                  width: '100%',
-                  padding: '15px',
-                  marginBottom: '15px',
-                  background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: '#1a0b2e',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  cursor: isGenerating ? 'wait' : 'pointer',
-                  opacity: isGenerating ? 0.6 : 1
-                }}
-              >
-                ✨ Análisis Completo
-              </button>
+          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 20px' }}>
+            
+            {/* HERO - Tu Configuración */}
+            <div style={{
+              textAlign: 'center',
+              marginBottom: '70px'
+            }}>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(184, 165, 214, 0.05))',
+                padding: '50px 40px',
+                borderRadius: '25px',
+                border: '1px solid rgba(212, 175, 55, 0.25)',
+                marginBottom: '40px'
+              }}>
+                <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginBottom: '30px', flexWrap: 'wrap' }}>
+                  {[
+                    { planet: 'sol', label: 'Sol' },
+                    { planet: 'luna', label: 'Luna' },
+                    { planet: 'ascendente', label: 'Asc' }
+                  ].map(({ planet, label }) => (
+                    <div key={planet} style={{ textAlign: 'center' }}>
+                      <div style={{ fontSize: '2rem', marginBottom: '5px' }}>{getPlanetEmoji(planet)}</div>
+                      <div style={{ color: '#d4af37', fontSize: '1.2rem', fontWeight: 600 }}>
+                        {getZodiacSign(chart[planet])}
+                      </div>
+                      <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{label}</div>
+                    </div>
+                  ))}
+                </div>
 
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))', gap: '10px' }}>
-                {['love', 'work', 'health'].map(cat => (
-                  <button
-                    key={cat}
-                    onClick={() => generateCategoryReading(cat)}
-                    disabled={isGenerating}
+                <h1 style={{
+                  fontSize: '2.5rem',
+                  color: '#d4af37',
+                  marginBottom: '20px',
+                  fontWeight: 600,
+                  lineHeight: '1.3'
+                }}>
+                  Tu carta astral completa
+                </h1>
+                
+                <p style={{
+                  fontSize: '1.3rem',
+                  color: '#b8a5d6',
+                  lineHeight: '1.7',
+                  maxWidth: '700px',
+                  margin: '0 auto 35px'
+                }}>
+                  Un mapa claro de quién eres, cómo amas y cómo te mueves en el mundo.
+                </p>
+
+                <button
+                  onClick={generateCompleteAnalysis}
+                  disabled={isGenerating}
+                  style={{
+                    padding: '20px 50px',
+                    background: 'linear-gradient(135deg, #d4af37, #f0c674)',
+                    border: 'none',
+                    borderRadius: '15px',
+                    color: '#1a0b2e',
+                    fontSize: '1.2rem',
+                    fontWeight: 600,
+                    cursor: isGenerating ? 'wait' : 'pointer',
+                    opacity: isGenerating ? 0.6 : 1,
+                    boxShadow: '0 8px 30px rgba(212, 175, 55, 0.35)',
+                    transition: 'all 0.3s ease'
+                  }}
+                >
+                  {isGenerating ? 'Generando...' : 'Ver mi análisis completo'}
+                </button>
+              </div>
+
+              <p style={{
+                color: '#9ca3af',
+                fontSize: '0.95rem',
+                fontStyle: 'italic'
+              }}>
+                Nada de esto es genérico. Está basado en tu fecha, tu hora y tu historia.
+              </p>
+            </div>
+
+            {/* Secciones Temáticas - Cards Grandes */}
+            <div style={{ marginBottom: '70px' }}>
+              <h2 style={{
+                color: '#d4af37',
+                fontSize: '2rem',
+                textAlign: 'center',
+                marginBottom: '15px'
+              }}>
+                O explora por temas
+              </h2>
+              <p style={{
+                color: '#b8a5d6',
+                textAlign: 'center',
+                fontSize: '1.1rem',
+                marginBottom: '40px'
+              }}>
+                Lecturas enfocadas en áreas específicas de tu vida
+              </p>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+                {[
+                  {
+                    key: 'love',
+                    emoji: '❤️',
+                    title: 'Amor y vínculos',
+                    desc: 'Cómo amas, qué buscas y por qué se repiten ciertos patrones',
+                    buttonText: 'Ver mi análisis'
+                  },
+                  {
+                    key: 'work',
+                    emoji: '💼',
+                    title: 'Trabajo y propósito',
+                    desc: 'Cómo tomas decisiones, lideras y enfrentas desafíos',
+                    buttonText: 'Explorar'
+                  },
+                  {
+                    key: 'health',
+                    emoji: '🌿',
+                    title: 'Salud y energía',
+                    desc: 'Tu ritmo interno, estrés y cómo recargarte',
+                    buttonText: 'Ver insights'
+                  }
+                ].map(({ key, emoji, title, desc, buttonText }) => (
+                  <div
+                    key={key}
                     style={{
-                      padding: '12px',
-                      background: 'rgba(45, 27, 78, 0.6)',
-                      border: '2px solid rgba(212, 175, 55, 0.3)',
-                      borderRadius: '10px',
-                      color: '#d4af37',
+                      background: 'linear-gradient(135deg, rgba(45, 27, 78, 0.6), rgba(26, 11, 46, 0.4))',
+                      padding: '40px',
+                      borderRadius: '20px',
+                      border: '1px solid rgba(212, 175, 55, 0.25)',
+                      display: 'flex',
+                      alignItems: 'center',
+                      gap: '30px',
+                      transition: 'all 0.3s ease',
                       cursor: isGenerating ? 'wait' : 'pointer',
-                      opacity: isGenerating ? 0.6 : 1
+                      opacity: isGenerating ? 0.6 : 1,
+                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
+                    }}
+                    onClick={() => generateCategoryReading(key)}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-4px)';
+                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(212, 175, 55, 0.2)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
                     }}
                   >
-                    {cat === 'love' && '💕 Amor'}
-                    {cat === 'work' && '💼 Trabajo'}
-                    {cat === 'health' && '🌿 Salud'}
-                  </button>
+                    <div style={{ fontSize: '3.5rem', flexShrink: 0 }}>{emoji}</div>
+                    <div style={{ flex: 1 }}>
+                      <h3 style={{
+                        color: '#d4af37',
+                        fontSize: '1.8rem',
+                        marginBottom: '12px',
+                        fontWeight: 600
+                      }}>
+                        {title}
+                      </h3>
+                      <p style={{
+                        color: '#b8a5d6',
+                        fontSize: '1.15rem',
+                        lineHeight: '1.6',
+                        marginBottom: '20px'
+                      }}>
+                        {desc}
+                      </p>
+                      <div style={{
+                        display: 'inline-block',
+                        padding: '10px 25px',
+                        background: 'rgba(212, 175, 55, 0.15)',
+                        border: '1px solid rgba(212, 175, 55, 0.4)',
+                        borderRadius: '10px',
+                        color: '#f0c674',
+                        fontSize: '1rem',
+                        fontWeight: 500
+                      }}>
+                        {buttonText} →
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
             </div>
 
-            <button
-              onClick={() => setShowPlanetDetails(!showPlanetDetails)}
-              style={{
-                width: '100%',
-                padding: '12px',
-                marginBottom: '20px',
-                background: 'rgba(45, 27, 78, 0.4)',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '10px',
-                color: '#d4af37',
-                cursor: 'pointer',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '10px'
-              }}
-            >
-              {showPlanetDetails ? '▼' : '▶'} {showPlanetDetails ? 'Ocultar' : 'Ver'} Detalles por Planeta
-            </button>
+            {/* Explorar por Planeta - Renombrado */}
+            <div style={{
+              background: 'rgba(45, 27, 78, 0.3)',
+              padding: '40px',
+              borderRadius: '20px',
+              border: '1px solid rgba(212, 175, 55, 0.2)',
+              marginBottom: '40px'
+            }}>
+              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
+                <h2 style={{
+                  color: '#d4af37',
+                  fontSize: '1.8rem',
+                  marginBottom: '10px'
+                }}>
+                  ✨ Explorar mi mapa interno
+                </h2>
+                <p style={{
+                  color: '#b8a5d6',
+                  fontSize: '1.05rem'
+                }}>
+                  Análisis profundo de cada planeta en tu carta
+                </p>
+              </div>
 
-            {showPlanetDetails && Object.entries(chart).map(([planet, degrees]) => {
-              const sign = getZodiacSign(degrees);
-              const deg = (degrees % 30).toFixed(1);
-              
-              return (
-                <div
-                  key={planet}
-                  style={{
-                    background: 'rgba(45, 27, 78, 0.4)',
-                    padding: '20px',
-                    borderRadius: '15px',
-                    marginBottom: '15px',
-                    borderLeft: '4px solid #d4af37'
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px' }}>
-                    <span style={{ fontSize: '1.5rem' }}>{getPlanetEmoji(planet)}</span>
-                    <div>
-                      <h3 style={{ color: '#d4af37', margin: 0, textTransform: 'capitalize' }}>{planet}</h3>
-                      <p style={{ color: '#b8a5d6', margin: 0 }}>{sign} {deg}°</p>
-                    </div>
-                  </div>
-                  
-                  <button
-                    onClick={() => generateDeepReading(planet, degrees)}
-                    style={{
-                      padding: '8px 16px',
-                      background: 'rgba(212, 175, 55, 0.2)',
-                      border: '1px solid rgba(212, 175, 55, 0.4)',
-                      borderRadius: '8px',
-                      color: '#d4af37',
-                      cursor: 'pointer'
-                    }}
-                  >
-                    🔮 Lectura Profunda
-                  </button>
+              <button
+                onClick={() => setShowPlanetDetails(!showPlanetDetails)}
+                style={{
+                  width: '100%',
+                  padding: '18px',
+                  background: 'rgba(212, 175, 55, 0.1)',
+                  border: '1px solid rgba(212, 175, 55, 0.3)',
+                  borderRadius: '12px',
+                  color: '#d4af37',
+                  cursor: 'pointer',
+                  fontSize: '1.1rem',
+                  fontWeight: 500,
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.1)';
+                }}
+              >
+                {showPlanetDetails ? '▼ Ocultar planetas' : '▶ Ver todos los planetas'}
+              </button>
+
+              {showPlanetDetails && (
+                <div style={{
+                  marginTop: '30px',
+                  display: 'grid',
+                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
+                  gap: '20px'
+                }}>
+                  {Object.entries(chart).map(([planet, degrees]) => {
+                    const sign = getZodiacSign(degrees);
+                    const deg = (degrees % 30).toFixed(1);
+                    
+                    return (
+                      <div
+                        key={planet}
+                        style={{
+                          background: 'linear-gradient(135deg, rgba(26, 11, 46, 0.7), rgba(45, 27, 78, 0.5))',
+                          padding: '25px',
+                          borderRadius: '15px',
+                          border: '1px solid rgba(212, 175, 55, 0.25)',
+                          transition: 'all 0.3s ease',
+                          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
+                        }}
+                        onMouseEnter={(e) => {
+                          e.currentTarget.style.boxShadow = '0 4px 20px rgba(212, 175, 55, 0.15)';
+                          e.currentTarget.style.transform = 'translateY(-2px)';
+                        }}
+                        onMouseLeave={(e) => {
+                          e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
+                          e.currentTarget.style.transform = 'translateY(0)';
+                        }}
+                      >
+                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
+                          <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                            {getPlanetEmoji(planet)}
+                          </div>
+                          <h3 style={{
+                            color: '#d4af37',
+                            margin: 0,
+                            textTransform: 'capitalize',
+                            fontSize: '1.3rem',
+                            fontWeight: 600,
+                            marginBottom: '5px'
+                          }}>
+                            {planet}
+                          </h3>
+                          <p style={{
+                            color: '#b8a5d6',
+                            margin: 0,
+                            fontSize: '1.05rem'
+                          }}>
+                            {sign} {deg}°
+                          </p>
+                        </div>
+                        
+                        <button
+                          onClick={() => generateDeepReading(planet, degrees)}
+                          style={{
+                            width: '100%',
+                            padding: '12px',
+                            background: 'rgba(212, 175, 55, 0.15)',
+                            border: '1px solid rgba(212, 175, 55, 0.4)',
+                            borderRadius: '10px',
+                            color: '#f0c674',
+                            cursor: 'pointer',
+                            fontSize: '0.95rem',
+                            fontWeight: 500,
+                            transition: 'all 0.3s ease'
+                          }}
+                          onMouseEnter={(e) => {
+                            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
+                          }}
+                          onMouseLeave={(e) => {
+                            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
+                          }}
+                        >
+                          Lectura profunda →
+                        </button>
+                      </div>
+                    );
+                  })}
                 </div>
-              );
-            })}
+              )}
+            </div>
 
-            <button
-              onClick={() => setCurrentView('home')}
-              style={{
-                marginTop: '20px',
-                padding: '12px 30px',
-                background: 'rgba(45, 27, 78, 0.6)',
-                border: '2px solid rgba(212, 175, 55, 0.3)',
-                borderRadius: '10px',
-                color: '#d4af37',
-                cursor: 'pointer'
-              }}
-            >
-              ← Inicio
-            </button>
+            {/* Botón Inicio */}
+            <div style={{ textAlign: 'center' }}>
+              <button
+                onClick={() => setCurrentView('home')}
+                style={{
+                  padding: '12px 30px',
+                  background: 'transparent',
+                  border: '1px solid rgba(212, 175, 55, 0.3)',
+                  borderRadius: '10px',
+                  color: '#d4af37',
+                  cursor: 'pointer',
+                  fontSize: '1rem',
+                  transition: 'all 0.3s ease'
+                }}
+                onMouseEnter={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.6)';
+                }}
+                onMouseLeave={(e) => {
+                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
+                }}
+              >
+                ← Volver al inicio
+              </button>
+            </div>
           </div>
         )}
 
