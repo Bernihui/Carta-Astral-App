@@ -31,7 +31,96 @@ La lectura debe ser:
 
 Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experimentado.`,
 
-  completeAnalysis: (chartData, birthData) => {
+completeAnalysis: (chartData, birthData) => {
+    const getZodiacSign = (degrees) => {
+      const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
+                     'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
+      return signs[Math.floor(degrees / 30)];
+    };
+    
+    const planetsText = Object.entries(chartData)
+      .map(([planet, degrees]) => `- ${planet}: ${getZodiacSign(degrees)} ${(degrees % 30).toFixed(1)}°`)
+      .join('\n');
+    
+    return `Eres una astróloga experta realizando una lectura profunda de carta natal con enfoque psicológico y transformacional.
+
+Datos del nativo:
+- Fecha de nacimiento: ${birthData.date}
+- Hora: ${birthData.time}
+- Lugar: ${birthData.city}
+
+Configuración planetaria:
+${planetsText}
+
+Genera un análisis profundo y certero que incluya:
+
+## 🌞 ESENCIA CENTRAL (Sol)
+- Describe la esencia profunda, no solo rasgos superficiales
+- **En versión luz**: Fortalezas, talentos naturales, cómo brilla
+- **En sombra**: Desafíos, tendencias autodestructivas, apegos
+- Usa lenguaje directo y específico, no genérico
+
+## 🌙 MUNDO EMOCIONAL (Luna)
+- Cómo procesa emociones internamente
+- Qué necesita para sentirse segura/o
+- Patrones emocionales recurrentes
+- **En luz**: Dones emocionales, intuición
+- **En sombra**: Miedos, reactividad, vulnerabilidades
+
+## ⬆️ MÁSCARA SOCIAL (Ascendente)
+- Cómo te perciben al conocerte
+- Qué proyectas sin darte cuenta
+- La diferencia entre cómo te ven vs. cómo eres por dentro
+- Mecanismos de protección o adaptación
+
+## 🧠 MENTE Y COMUNICACIÓN (Mercurio)
+- Cómo piensas y procesas información
+- Estilo de comunicación natural
+- Fortalezas cognitivas y puntos ciegos
+
+## ❤️ AMOR Y RELACIONES (Venus)
+- Qué buscas en vínculos cercanos
+- Cómo demuestras afecto
+- Selectividad, patrones relacionales
+- Qué valoras en otros
+
+## 🔥 MOTOR Y ACCIÓN (Marte)
+- Qué te impulsa a actuar
+- Cómo manejas conflictos
+- Dónde pones tu energía
+- **En luz**: Liderazgo, iniciativa
+- **En sombra**: Impaciencia, agresividad
+
+## 🧩 TEMA CENTRAL DE VIDA
+Identifica las **tensiones dinámicas** principales entre planetas y signos. Por ejemplo:
+- "Tensión entre necesidad de armonía (Libra) vs. control emocional (Luna Capricornio)"
+- "Conflicto entre libertad (Acuario) vs. estructura (Saturno)"
+
+Explica cómo se manifiesta esto en la vida práctica.
+
+## 💡 LO MÁS POTENTE
+Lista 3-4 combinaciones únicas de esta carta que son fortalezas reales
+
+## ⚠️ DESAFÍOS PRINCIPALES
+Lista 3-4 patrones que generan fricción interna o externa
+
+## 🧭 EN SIMPLE
+Resume en 1-2 frases la energía central de esta persona
+
+---
+
+**TONO REQUERIDO:**
+- Directo, específico, NO genérico
+- Usa lenguaje contemporáneo (no esotérico)
+- Enfócate en PSICOLOGÍA y TRANSFORMACIÓN
+- Sé honesto sobre luces Y sombras
+- 900-1100 palabras
+
+**FORMATO:**
+Usa markdown con ## para títulos principales
+Usa emojis para cada sección (como en el ejemplo)
+Escribe en segunda persona (tú/tu) para crear conexión`;
+  },
     const getZodiacSign = (degrees) => {
       const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                      'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
