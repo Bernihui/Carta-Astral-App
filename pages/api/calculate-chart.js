@@ -16,7 +16,7 @@ export default async function handler(req, res) {
   }
 
   try {
-    // 1. Geocoding + Timezone
+    // 1. Geocoding
     const geocodeUrl = `https://nominatim.openstreetmap.org/search?q=${encodeURIComponent(city)}&format=json&limit=1`;
     
     const geoResponse = await fetch(geocodeUrl, {
@@ -34,42 +34,17 @@ export default async function handler(req, res) {
     
     console.log('Location:', { latitude, longitude, name: geoData[0].display_name });
 
-    // 2. Obtener timezone desde TimezoneDB API (gratis)
-    const timezoneUrl = `https://api.timezonedb.com/v2.1/get-time-zone?key=demo&format=json&by=position&lat=${latitude}&lng=${longitude}`;
-    
-    let timezone = 'UTC';
-    try {
-      const tzResponse = await fetch(timezoneUrl);
-      const tzData = await tzResponse.json();
-      if (tzData.status === 'OK') {
-        timezone = tzData.zoneName;
-        console.log('Timezone detected:', timezone);
-      }
-    } catch (e) {
-      console.warn('Could not detect timezone, using UTC');
-    }
-
-    // 3. Convertir fecha local a UTC
+    // 2. Parsear fecha y hora
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     
-    // Crear fecha en timezone local
-    const localTime = DateTime.fromObject(
-      { year, month, day, hour: hours, minute: minutes },
-      { zone: timezone }
-    );
+    // 3. Calcular Julian Day (UTC aproximado para planetas)
+    const dateTime = new Date(year, month - 1, day, hours, minutes);
+    const JD = getJulianDay(dateTime);
     
-    // Convertir a UTC
-    const utcTime = localTime.toUTC();
-    
-    console.log('Local time:', localTime.toISO());
-    console.log('UTC time:', utcTime.toISO());
-    
-    // 4. Calcular Julian Day en UTC
-    const JD = getJulianDay(utcTime.toJSDate());
     console.log('Julian Day:', JD);
     
-    // 5. Calcular posiciones planetarias
+    // 4. Calcular posiciones planetarias (mis cálculos - funcionan bien)
     const positions = {
       sol: getSunLongitude(JD),
       luna: getMoonLongitude(JD),
@@ -77,9 +52,20 @@ export default async function handler(req, res) {
       venus: getPlanetLongitude('venus', JD),
       marte: getPlanetLongitude('mars', JD),
       jupiter: getPlanetLongitude('jupiter', JD),
-      saturno: getPlanetLongitude('saturn', JD),
-      ascendente: getAscendant(JD, latitude, longitude)
+      saturno: getPlanetLongitude('saturn', JD)
     };
+
+    console.log('Planet positions calculated');
+
+    // 5. USAR CLAUDE PARA CALCULAR ASCENDENTE
+    console.log('Calculating ascendant with Claude...');
+    
+    const ascendente = await calculateAscendantWithClaude(
+      year, month, day, hours, minutes,
+      latitude, longitude, geoData[0].display_name
+    );
+    
+    positions.ascendente = ascendente;
 
     console.log('=== FINAL POSITIONS ===');
     console.log(JSON.stringify(positions, null, 2));
@@ -89,8 +75,7 @@ export default async function handler(req, res) {
       location: {
         city: geoData[0].display_name,
         latitude,
-        longitude,
-        timezone
+        longitude
       }
     });
 
@@ -104,16 +89,82 @@ export default async function handler(req, res) {
   }
 }
 
+// Función que usa Claude para calcular el ascendente
+async function calculateAscendantWithClaude(year, month, day, hours, minutes, latitude, longitude, cityName) {
+  try {
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
+    const anthropic = new Anthropic({
+      apiKey: process.env.ANTHROPIC_API_KEY,
+    });
+
+    const prompt = `Eres un calculador experto de astrología. Necesito que calcules el ASCENDENTE (grado eclíptico exacto) para los siguientes datos de nacimiento:
+
+Fecha: ${year}-${month.toString().padStart(2, '0')}-${day.toString().padStart(2, '0')}
+Hora: ${hours.toString().padStart(2, '0')}:${minutes.toString().padStart(2, '0')} (hora local)
+Ciudad: ${cityName}
+Latitud: ${latitude}°
+Longitud: ${longitude}°
+
+INSTRUCCIONES CRÍTICAS:
+1. Debes calcular el ascendente usando cálculos astronómicos precisos (tiempo sideral local, oblicuidad de la eclíptica, sistema de casas Placidus)
+2. Ten en cuenta la zona horaria correcta para esta ciudad en esta fecha histórica
+3. Devuelve SOLAMENTE el grado eclíptico del ascendente como un número entre 0 y 360
+
+FORMATO DE RESPUESTA (solo el número, nada más):
+XXX.XX
+
+Por ejemplo: 285.45 o 120.30
+
+NO incluyas explicaciones, NO incluyas el signo zodiacal, SOLO el número de grados.`;
+
+    const message = await anthropic.messages.create({
+      model: 'claude-sonnet-4-20250514',
+      max_tokens: 100,
+      messages: [{ role: 'user', content: prompt }]
+    });
+
+    const response = message.content
+      .filter(item => item.type === 'text')
+      .map(item => item.text)
+      .join('');
+
+    console.log('Claude response for ascendant:', response);
+
+    // Extraer el número
+    const match = response.match(/(\d+\.?\d*)/);
+    if (!match) {
+      console.error('Could not parse ascendant from Claude response:', response);
+      return 0;
+    }
+
+    const ascendant = parseFloat(match[0]);
+    
+    // Validar rango
+    if (isNaN(ascendant) || ascendant < 0 || ascendant >= 360) {
+      console.error('Invalid ascendant value:', ascendant);
+      return 0;
+    }
+
+    console.log('Ascendant calculated by Claude:', ascendant);
+    return ascendant;
+
+  } catch (error) {
+    console.error('Error calculating ascendant with Claude:', error);
+    // Fallback a cálculo manual si Claude falla
+    return getAscendantFallback(getJulianDay(new Date(year, month - 1, day, hours, minutes)), latitude, longitude);
+  }
+}
+
 // Helper functions
 function getJulianDay(date) {
-  const a = Math.floor((14 - (date.getUTCMonth() + 1)) / 12);
-  const y = date.getUTCFullYear() + 4800 - a;
-  const m = (date.getUTCMonth() + 1) + 12 * a - 3;
+  const a = Math.floor((14 - (date.getMonth() + 1)) / 12);
+  const y = date.getFullYear() + 4800 - a;
+  const m = (date.getMonth() + 1) + 12 * a - 3;
   
-  let jdn = date.getUTCDate() + Math.floor((153 * m + 2) / 5) + 365 * y 
+  let jdn = date.getDate() + Math.floor((153 * m + 2) / 5) + 365 * y 
     + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
   
-  const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+  const hours = date.getHours() + date.getMinutes() / 60;
   return jdn + (hours - 12) / 24;
 }
 
@@ -178,7 +229,8 @@ function getPlanetLongitude(planet, JD) {
   return normalize(L + C);
 }
 
-function getAscendant(JD, latitude, longitude) {
+// Fallback si Claude falla
+function getAscendantFallback(JD, latitude, longitude) {
   const T = (JD - 2451545.0) / 36525.0;
   const theta0 = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * T * T;
   const theta = normalize(theta0 + longitude);
