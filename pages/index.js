@@ -984,7 +984,7 @@ export default function Home() {
                   marginBottom: '15px',
                   fontWeight: 600
                 }}>
-                  Analiza tu compatibilidad
+                  Analiza tu compatibilidad ✨
                 </h2>
                 <p style={{
                   color: '#b8a5d6',
