@@ -1,8 +1,9 @@
-// pages/index.js - v6 Homepage completo
+// pages/index.js - VERSIÓN MINIMALISTA
+// 100% funcionalidad original, diseño ultra-limpio
 import { useState } from 'react';
 import Head from 'next/head';
 
-// Sistema de prompts
+// [TODO EL CÓDIGO DE PROMPTS SE MANTIENE IGUAL]
 const PROMPTS = {
   deepReading: (planet, sign, degree, birthData) => `Eres un astrólogo experto con profundo conocimiento de la astrología moderna y psicológica.
 
@@ -171,6 +172,7 @@ Extensión: 600-700 palabras`;
   },
 };
 
+// [TODAS LAS FUNCIONES SE MANTIENEN IGUALES]
 const calculatePlanetaryPositions = async (birthDate, birthTime, city) => {
   try {
     const response = await fetch('/api/calculate-chart', {
@@ -202,16 +204,13 @@ const getZodiacSign = (degrees) => {
   const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                  'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
   
-  // Validar que degrees sea un número válido
   if (degrees === undefined || degrees === null || isNaN(degrees)) {
     return 'undefined';
   }
   
-  // Normalizar a rango 0-360
   let normalizedDegrees = degrees % 360;
   if (normalizedDegrees < 0) normalizedDegrees += 360;
   
-  // Calcular índice del signo
   const index = Math.floor(normalizedDegrees / 30);
   
   return signs[index] || 'undefined';
@@ -226,7 +225,7 @@ const getPlanetEmoji = (planet) => {
 };
 
 export default function Home() {
-  const [currentView, setCurrentView] = useState('home'); // 'home', 'form', 'results'
+  const [currentView, setCurrentView] = useState('home');
   const [formData, setFormData] = useState({ date: '', time: '', city: '', gender: '' });
   const [chart, setChart] = useState(null);
   const [currentReading, setCurrentReading] = useState(null);
@@ -296,7 +295,6 @@ export default function Home() {
   };
 
   const generateDeepReading = (planet, degrees) => {
-    // Validar que degrees sea un número válido
     if (degrees === undefined || degrees === null || isNaN(degrees)) {
       alert('Error: No se pudo obtener la posición de ' + planet + '. Por favor intenta generar la carta nuevamente.');
       return;
@@ -338,7 +336,6 @@ export default function Home() {
     setIsGenerating(true);
     
     try {
-      // 1. Calcular carta de la otra persona
       const chartResponse = await fetch('/api/calculate-chart', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -353,9 +350,7 @@ export default function Home() {
       
       const { positions: person2Positions } = await chartResponse.json();
 
-      // 2. Generar los 3 análisis en paralelo
       const analyses = await Promise.all([
-        // Amor
         fetch('/api/compatibility', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -368,7 +363,6 @@ export default function Home() {
           })
         }).then(r => r.json()),
         
-        // Amistad
         fetch('/api/compatibility', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -381,7 +375,6 @@ export default function Home() {
           })
         }).then(r => r.json()),
         
-        // Trabajo
         fetch('/api/compatibility', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -421,205 +414,124 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Carta Astral - Tu carta, pero explicada como si alguien realmente te conociera</title>
+        <title>Carta Astral</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
-        <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;600&display=swap" rel="stylesheet" />
+        <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
       </Head>
 
-      <div style={{
-        minHeight: '100vh',
-        background: 'linear-gradient(135deg, #1a0b2e 0%, #2d1b4e 50%, #1a0b2e 100%)',
-        color: '#e2e8f0',
-        fontFamily: "'Crimson Pro', Georgia, serif"
-      }}>
+      {/* ESTILOS MINIMALISTAS */}
+      <style jsx global>{`
+        * {
+          margin: 0;
+          padding: 0;
+          box-sizing: border-box;
+        }
         
-        {/* HOMEPAGE */}
+        body {
+          font-family: 'Inter', -apple-system, sans-serif;
+          -webkit-font-smoothing: antialiased;
+          background: #FFFFFF;
+          color: #000000;
+        }
+        
+        input, select {
+          -webkit-appearance: none;
+        }
+        
+        input:focus, select:focus {
+          outline: none;
+          border-color: #000000 !important;
+        }
+        
+        button:hover:not(:disabled) {
+          opacity: 0.8;
+        }
+      `}</style>
+
+      <div style={{ minHeight: '100vh', background: '#FFFFFF', color: '#000000', fontFamily: 'Inter, sans-serif' }}>
+        
+        {/* ===== HOMEPAGE ===== */}
         {currentView === 'home' && (
-          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '80px 20px' }}>
-            {/* Hero */}
-            <div style={{ textAlign: 'center', marginBottom: '100px' }}>
-              <h1 style={{
-                fontSize: '3.5rem',
-                lineHeight: '1.2',
-                background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                marginBottom: '30px',
-                fontWeight: 600
-              }}>
-                Tu carta astral, pero explicada<br/>como si alguien realmente te conociera.
+          <div style={{ maxWidth: '680px', margin: '0 auto', padding: '120px 24px 80px' }}>
+            
+            {/* Logo */}
+            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+              <h1 style={{ fontSize: '20px', fontWeight: 500, marginBottom: '60px', letterSpacing: '0.02em' }}>
+                Carta Astral
               </h1>
               
-              <p style={{
-                fontSize: '1.3rem',
-                color: '#b8a5d6',
-                maxWidth: '800px',
-                margin: '0 auto 50px',
-                lineHeight: '1.8'
-              }}>
-                Ingresa tu fecha, hora y lugar de nacimiento y recibe una lectura clara, profunda y bajada a la vida real: cómo eres, qué te mueve, cómo amas, cómo piensas y qué patrones se repiten en ti.
+              <h2 style={{ fontSize: '42px', lineHeight: '1.2', fontWeight: 400, marginBottom: '24px', letterSpacing: '-0.02em' }}>
+                Tu carta astral, pero explicada como si alguien realmente te conociera.
+              </h2>
+              
+              <p style={{ fontSize: '18px', color: '#666666', lineHeight: '1.7', marginBottom: '48px' }}>
+                Ingresa tu fecha, hora y lugar de nacimiento y recibe una lectura clara, profunda y bajada a la vida real.
               </p>
 
-              <div style={{ display: 'flex', gap: '20px', justifyContent: 'center', flexWrap: 'wrap' }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
                 <button
                   onClick={() => setCurrentView('form')}
-                  style={{
-                    padding: '18px 40px',
-                    background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                    border: 'none',
-                    borderRadius: '12px',
-                    color: '#1a0b2e',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    cursor: 'pointer',
-                    boxShadow: '0 4px 20px rgba(212, 175, 55, 0.3)'
-                  }}
+                  style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                 >
                   Leer mi carta astral
                 </button>
                 
                 <button
-                  onClick={() => {
-                    fillDemoData();
-                    setCurrentView('form');
-                  }}
-                  style={{
-                    padding: '18px 40px',
-                    background: 'transparent',
-                    border: '2px solid #d4af37',
-                    borderRadius: '12px',
-                    color: '#d4af37',
-                    fontSize: '1.1rem',
-                    fontWeight: 600,
-                    cursor: 'pointer'
-                  }}
+                  onClick={() => { fillDemoData(); setCurrentView('form'); }}
+                  style={{ padding: '14px 32px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                 >
-                  Probar con una fecha
+                  Probar con ejemplo
                 </button>
               </div>
             </div>
 
-            {/* No es solo tu signo */}
-            <div style={{
-              background: 'rgba(45, 27, 78, 0.4)',
-              padding: '50px',
-              borderRadius: '20px',
-              marginBottom: '80px',
-              border: '1px solid rgba(212, 175, 55, 0.2)'
-            }}>
-              <h2 style={{ color: '#d4af37', fontSize: '2rem', marginBottom: '20px', textAlign: 'center' }}>
-                No es solo tu signo
-              </h2>
-              <p style={{ fontSize: '1.2rem', color: '#b8a5d6', textAlign: 'center', lineHeight: '1.8', maxWidth: '700px', margin: '0 auto' }}>
-                Tu signo solar es solo una parte. Tu Luna habla de tus emociones, tu Ascendente de cómo te ven, Venus de cómo amas y Marte de cómo actúas.
+            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+
+            {/* Features */}
+            <div style={{ marginBottom: '80px' }}>
+              <h3 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '40px', textAlign: 'center' }}>
+                Qué vas a descubrir
+              </h3>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+                {[
+                  { emoji: '🌞', title: 'Tu esencia', desc: 'Lo que te mueve en profundidad.' },
+                  { emoji: '🌙', title: 'Tu mundo emocional', desc: 'Cómo sientes, qué necesitas y cómo te proteges.' },
+                  { emoji: '⬆️', title: 'Cómo te perciben', desc: 'La energía que proyectas sin darte cuenta.' },
+                  { emoji: '❤️', title: 'Amor y vínculos', desc: 'Cómo amas, qué buscas y qué te cuesta soltar.' },
+                  { emoji: '🔥', title: 'Energía y acción', desc: 'Cómo decides, avanzas y enfrentas conflicto.' },
+                  { emoji: '🧩', title: 'Tu tema central', desc: 'La tensión interna que más marca tu vida.' }
+                ].map((item, i) => (
+                  <div key={i} style={{ paddingBottom: '48px', borderBottom: i < 5 ? '1px solid #F5F5F5' : 'none' }}>
+                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>{item.emoji}</div>
+                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px' }}>{item.title}</h4>
+                    <p style={{ color: '#666666', lineHeight: '1.6' }}>{item.desc}</p>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+
+            {/* Ejemplo */}
+            <div style={{ marginBottom: '80px' }}>
+              <div style={{ padding: '40px', background: '#F5F5F5', borderLeft: '4px solid #000000' }}>
+                <p style={{ fontSize: '20px', lineHeight: '1.7', color: '#000000', fontStyle: 'italic' }}>
+                  "Eres Libra, pero no solo buscas armonía. Hay en ti una necesidad profunda de construir vínculos justos, inteligentes y sostenibles. Con tu energía Capricornio, no te entregas fácil: observas, evalúas y eliges dónde poner tu energía."
+                </p>
+              </div>
+              <p style={{ fontSize: '14px', color: '#999999', marginTop: '16px', textAlign: 'center' }}>
+                Astrología sin humo. Lecturas claras, humanas y accionables.
               </p>
             </div>
 
-            {/* Qué vas a descubrir */}
-            <h2 style={{ color: '#d4af37', fontSize: '2.5rem', marginBottom: '50px', textAlign: 'center' }}>
-              Qué vas a descubrir
-            </h2>
-
-            <div style={{
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))',
-              gap: '30px',
-              marginBottom: '100px'
-            }}>
-              {[
-                { emoji: '🌞', title: 'Tu esencia', desc: 'Lo que te mueve en profundidad.' },
-                { emoji: '🌙', title: 'Tu mundo emocional', desc: 'Cómo sientes, qué necesitas y cómo te proteges.' },
-                { emoji: '⬆️', title: 'Cómo te perciben', desc: 'La energía que proyectas sin darte cuenta.' },
-                { emoji: '❤️', title: 'Amor y vínculos', desc: 'Cómo amas, qué buscas y qué te cuesta soltar.' },
-                { emoji: '🔥', title: 'Energía y acción', desc: 'Cómo decides, avanzas y enfrentas conflicto.' },
-                { emoji: '🧩', title: 'Tu tema central', desc: 'La tensión interna que más marca tu vida.' }
-              ].map((item, i) => (
-                <div key={i} style={{
-                  background: 'rgba(45, 27, 78, 0.4)',
-                  padding: '40px',
-                  borderRadius: '20px',
-                  border: '1px solid rgba(212, 175, 55, 0.2)',
-                  textAlign: 'center'
-                }}>
-                  <div style={{ fontSize: '3rem', marginBottom: '20px' }}>{item.emoji}</div>
-                  <h3 style={{ color: '#d4af37', fontSize: '1.5rem', marginBottom: '15px' }}>{item.title}</h3>
-                  <p style={{ color: '#b8a5d6', lineHeight: '1.6' }}>{item.desc}</p>
-                </div>
-              ))}
-            </div>
-
-            {/* Ejemplo visual */}
-            <div style={{
-              background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(184, 165, 214, 0.1))',
-              padding: '60px',
-              borderRadius: '20px',
-              marginBottom: '100px',
-              border: '1px solid rgba(212, 175, 55, 0.3)',
-              textAlign: 'center'
-            }}>
-              <p style={{
-                fontSize: '1.4rem',
-                color: '#e2e8f0',
-                lineHeight: '1.9',
-                marginBottom: '30px',
-                fontStyle: 'italic',
-                maxWidth: '700px',
-                margin: '0 auto 30px'
-              }}>
-                "Eres Libra, pero no solo buscas armonía. Hay en ti una necesidad profunda de construir vínculos justos, inteligentes y sostenibles. Con tu energía Capricornio, no te entregas fácil: observas, evalúas y eliges dónde poner tu energía."
-              </p>
-              <button
-                onClick={() => setCurrentView('form')}
-                style={{
-                  padding: '15px 35px',
-                  background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: '#1a0b2e',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer'
-                }}
-              >
-                Ver mi lectura completa
-              </button>
-            </div>
-
-            {/* Tono de la app */}
-            <div style={{ textAlign: 'center', marginBottom: '100px' }}>
-              <p style={{
-                fontSize: '1.3rem',
-                color: '#b8a5d6',
-                lineHeight: '1.8',
-                maxWidth: '600px',
-                margin: '0 auto'
-              }}>
-                Astrología sin humo. Lecturas claras, humanas y accionables. Nada de frases genéricas: interpretaciones pensadas para entenderte mejor.
-              </p>
-            </div>
-
-            {/* Cierre */}
             <div style={{ textAlign: 'center' }}>
-              <h2 style={{
-                fontSize: '2.5rem',
-                color: '#d4af37',
-                marginBottom: '40px'
-              }}>
+              <h3 style={{ fontSize: '28px', fontWeight: 400, marginBottom: '16px' }}>
                 A veces no necesitas cambiar.<br/>Solo entenderte mejor.
-              </h2>
+              </h3>
               <button
                 onClick={() => setCurrentView('form')}
-                style={{
-                  padding: '18px 40px',
-                  background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                  border: 'none',
-                  borderRadius: '12px',
-                  color: '#1a0b2e',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  cursor: 'pointer',
-                  boxShadow: '0 4px 20px rgba(212, 175, 55, 0.3)'
-                }}
+                style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', marginTop: '32px', fontFamily: 'inherit' }}
               >
                 Empezar mi lectura
               </button>
@@ -627,94 +539,50 @@ export default function Home() {
           </div>
         )}
 
-        {/* FORMULARIO */}
+        {/* ===== FORM ===== */}
         {currentView === 'form' && (
-          <div style={{ maxWidth: '500px', margin: '0 auto', padding: '80px 20px' }}>
+          <div style={{ maxWidth: '480px', margin: '0 auto', padding: '80px 24px' }}>
             <button
               onClick={() => setCurrentView('home')}
-              style={{
-                background: 'transparent',
-                border: 'none',
-                color: '#d4af37',
-                fontSize: '1rem',
-                cursor: 'pointer',
-                marginBottom: '30px',
-                display: 'flex',
-                alignItems: 'center',
-                gap: '10px'
-              }}
+              style={{ background: 'transparent', border: 'none', color: '#000000', fontSize: '15px', cursor: 'pointer', marginBottom: '40px', fontFamily: 'inherit', padding: '8px 0' }}
             >
               ← Volver
             </button>
 
-            <h1 style={{
-              fontSize: '2.5rem',
-              textAlign: 'center',
-              color: '#d4af37',
-              marginBottom: '20px'
-            }}>
+            <h1 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '48px' }}>
               Tu Carta Astral
             </h1>
 
-            <p style={{
-              textAlign: 'center',
-              color: '#b8a5d6',
-              marginBottom: '40px'
-            }}>
-              Ingresa tus datos de nacimiento
-            </p>
-
-            <form onSubmit={handleSubmit} style={{
-              background: 'rgba(45, 27, 78, 0.4)',
-              padding: '40px',
-              borderRadius: '20px',
-              border: '1px solid rgba(212, 175, 55, 0.2)'
-            }}>
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', color: '#b8a5d6' }}>
-                  📅 Fecha de Nacimiento
+            <form onSubmit={handleSubmit}>
+              <div style={{ marginBottom: '32px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                  Fecha de nacimiento
                 </label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({...formData, date: e.target.value})}
                   required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(26, 11, 46, 0.6)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    fontSize: '1rem'
-                  }}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', color: '#b8a5d6' }}>
-                  ⏰ Hora de Nacimiento
+              <div style={{ marginBottom: '32px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                  Hora de nacimiento
                 </label>
                 <input
                   type="time"
                   value={formData.time}
                   onChange={(e) => setFormData({...formData, time: e.target.value})}
                   required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(26, 11, 46, 0.6)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    fontSize: '1rem'
-                  }}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', color: '#b8a5d6' }}>
-                  🌍 Lugar de Nacimiento
+              <div style={{ marginBottom: '32px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                  Lugar de nacimiento
                 </label>
                 <input
                   type="text"
@@ -722,35 +590,19 @@ export default function Home() {
                   onChange={(e) => setFormData({...formData, city: e.target.value})}
                   placeholder="Santiago, Chile"
                   required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(26, 11, 46, 0.6)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    fontSize: '1rem'
-                  }}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                 />
               </div>
 
-              <div style={{ marginBottom: '20px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', color: '#b8a5d6' }}>
-                  👤 Género
+              <div style={{ marginBottom: '32px' }}>
+                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                  Género
                 </label>
                 <select
                   value={formData.gender}
                   onChange={(e) => setFormData({...formData, gender: e.target.value})}
                   required
-                  style={{
-                    width: '100%',
-                    padding: '12px',
-                    background: 'rgba(26, 11, 46, 0.6)',
-                    border: '1px solid rgba(212, 175, 55, 0.3)',
-                    borderRadius: '8px',
-                    color: '#e2e8f0',
-                    fontSize: '1rem'
-                  }}
+                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                 >
                   <option value="">Selecciona...</option>
                   <option value="Femenino">Femenino</option>
@@ -763,384 +615,142 @@ export default function Home() {
               <button
                 type="submit"
                 disabled={isCalculating}
-                style={{
-                  width: '100%',
-                  padding: '15px',
-                  background: isCalculating ? 'rgba(212, 175, 55, 0.5)' : 'linear-gradient(135deg, #d4af37, #f0c674)',
-                  border: 'none',
-                  borderRadius: '10px',
-                  color: '#1a0b2e',
-                  fontSize: '1.1rem',
-                  fontWeight: 600,
-                  cursor: isCalculating ? 'wait' : 'pointer',
-                  opacity: isCalculating ? 0.7 : 1
-                }}
+                style={{ width: '100%', padding: '14px', background: isCalculating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isCalculating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
               >
-                {isCalculating ? 'Calculando posiciones celestiales...' : 'Generar Carta Astral ✨'}
+                {isCalculating ? 'Calculando...' : 'Generar Carta Astral'}
               </button>
             </form>
           </div>
         )}
 
-        {/* RESULTADOS */}
+        {/* ===== RESULTS ===== */}
         {currentView === 'results' && (
-          <div style={{ maxWidth: '1100px', margin: '0 auto', padding: '60px 20px' }}>
+          <div style={{ maxWidth: '680px', margin: '0 auto', padding: '80px 24px' }}>
             
-            {/* HERO - Tu Configuración */}
-            <div style={{
-              textAlign: 'center',
-              marginBottom: '70px'
-            }}>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.1), rgba(184, 165, 214, 0.05))',
-                padding: '50px 40px',
-                borderRadius: '25px',
-                border: '1px solid rgba(212, 175, 55, 0.25)',
-                marginBottom: '40px'
-              }}>
-                <div style={{ display: 'flex', justifyContent: 'center', gap: '30px', marginBottom: '30px', flexWrap: 'wrap' }}>
-                  {[
-                    { planet: 'sol', label: 'Sol' },
-                    { planet: 'luna', label: 'Luna' },
-                    { planet: 'ascendente', label: 'Asc' }
-                  ].map(({ planet, label }) => (
-                    <div key={planet} style={{ textAlign: 'center' }}>
-                      <div style={{ fontSize: '2rem', marginBottom: '5px' }}>{getPlanetEmoji(planet)}</div>
-                      <div style={{ color: '#d4af37', fontSize: '1.2rem', fontWeight: 600 }}>
-                        {getZodiacSign(chart[planet])}
-                      </div>
-                      <div style={{ color: '#9ca3af', fontSize: '0.85rem' }}>{label}</div>
-                    </div>
-                  ))}
-                </div>
-
-                <h1 style={{
-                  fontSize: '2.5rem',
-                  color: '#d4af37',
-                  marginBottom: '20px',
-                  fontWeight: 600,
-                  lineHeight: '1.3'
-                }}>
-                  Tu carta astral completa
-                </h1>
-                
-                <p style={{
-                  fontSize: '1.3rem',
-                  color: '#b8a5d6',
-                  lineHeight: '1.7',
-                  maxWidth: '700px',
-                  margin: '0 auto 35px'
-                }}>
-                  Un mapa claro de quién eres, cómo amas y cómo te mueves en el mundo.
-                </p>
-
-                <button
-                  onClick={generateCompleteAnalysis}
-                  disabled={isGenerating}
-                  style={{
-                    padding: '20px 50px',
-                    background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                    border: 'none',
-                    borderRadius: '15px',
-                    color: '#1a0b2e',
-                    fontSize: '1.2rem',
-                    fontWeight: 600,
-                    cursor: isGenerating ? 'wait' : 'pointer',
-                    opacity: isGenerating ? 0.6 : 1,
-                    boxShadow: '0 8px 30px rgba(212, 175, 55, 0.35)',
-                    transition: 'all 0.3s ease'
-                  }}
-                >
-                  {isGenerating ? 'Generando...' : 'Ver mi análisis completo'}
-                </button>
-              </div>
-
-              <p style={{
-                color: '#9ca3af',
-                fontSize: '0.95rem',
-                fontStyle: 'italic'
-              }}>
-                Nada de esto es genérico. Está basado en tu fecha, tu hora y tu historia.
-              </p>
-            </div>
-
-            {/* Secciones Temáticas - Cards Grandes */}
-            <div style={{ marginBottom: '70px' }}>
-              <h2 style={{
-                color: '#d4af37',
-                fontSize: '2rem',
-                textAlign: 'center',
-                marginBottom: '15px'
-              }}>
-                O explora por temas
-              </h2>
-              <p style={{
-                color: '#b8a5d6',
-                textAlign: 'center',
-                fontSize: '1.1rem',
-                marginBottom: '40px'
-              }}>
-                Lecturas enfocadas en áreas específicas de tu vida
-              </p>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '25px' }}>
+            {/* Big 3 */}
+            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
+              <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginBottom: '48px', flexWrap: 'wrap' }}>
                 {[
-                  {
-                    key: 'love',
-                    emoji: '❤️',
-                    title: 'Amor y vínculos',
-                    desc: 'Cómo amas, qué buscas y por qué se repiten ciertos patrones',
-                    buttonText: 'Ver mi análisis'
-                  },
-                  {
-                    key: 'work',
-                    emoji: '💼',
-                    title: 'Trabajo y propósito',
-                    desc: 'Cómo tomas decisiones, lideras y enfrentas desafíos',
-                    buttonText: 'Explorar'
-                  },
-                  {
-                    key: 'health',
-                    emoji: '🌿',
-                    title: 'Salud y energía',
-                    desc: 'Tu ritmo interno, estrés y cómo recargarte',
-                    buttonText: 'Ver insights'
-                  }
-                ].map(({ key, emoji, title, desc, buttonText }) => (
-                  <div
-                    key={key}
-                    style={{
-                      background: 'linear-gradient(135deg, rgba(45, 27, 78, 0.6), rgba(26, 11, 46, 0.4))',
-                      padding: '40px',
-                      borderRadius: '20px',
-                      border: '1px solid rgba(212, 175, 55, 0.25)',
-                      display: 'flex',
-                      alignItems: 'center',
-                      gap: '30px',
-                      transition: 'all 0.3s ease',
-                      cursor: isGenerating ? 'wait' : 'pointer',
-                      opacity: isGenerating ? 0.6 : 1,
-                      boxShadow: '0 4px 20px rgba(0, 0, 0, 0.3)'
-                    }}
-                    onClick={() => generateCategoryReading(key)}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-4px)';
-                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(212, 175, 55, 0.2)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 4px 20px rgba(0, 0, 0, 0.3)';
-                    }}
-                  >
-                    <div style={{ fontSize: '3.5rem', flexShrink: 0 }}>{emoji}</div>
-                    <div style={{ flex: 1 }}>
-                      <h3 style={{
-                        color: '#d4af37',
-                        fontSize: '1.8rem',
-                        marginBottom: '12px',
-                        fontWeight: 600
-                      }}>
-                        {title}
-                      </h3>
-                      <p style={{
-                        color: '#b8a5d6',
-                        fontSize: '1.15rem',
-                        lineHeight: '1.6',
-                        marginBottom: '20px'
-                      }}>
-                        {desc}
-                      </p>
-                      <div style={{
-                        display: 'inline-block',
-                        padding: '10px 25px',
-                        background: 'rgba(212, 175, 55, 0.15)',
-                        border: '1px solid rgba(212, 175, 55, 0.4)',
-                        borderRadius: '10px',
-                        color: '#f0c674',
-                        fontSize: '1rem',
-                        fontWeight: 500
-                      }}>
-                        {buttonText} →
-                      </div>
+                  { planet: 'sol', label: 'Sol' },
+                  { planet: 'luna', label: 'Luna' },
+                  { planet: 'ascendente', label: 'Asc' }
+                ].map(({ planet, label }) => (
+                  <div key={planet}>
+                    <div style={{ fontSize: '14px', color: '#999999', marginBottom: '8px' }}>{label}</div>
+                    <div style={{ fontSize: '24px', fontWeight: 500 }}>
+                      {getZodiacSign(chart[planet])}
                     </div>
                   </div>
                 ))}
               </div>
+
+              <button
+                onClick={generateCompleteAnalysis}
+                disabled={isGenerating}
+                style={{ padding: '14px 32px', background: isGenerating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+              >
+                {isGenerating ? 'Generando...' : 'Ver análisis completo'}
+              </button>
             </div>
 
-            {/* COMPATIBILIDAD */}
-            <div style={{ margin: '70px 0' }}>
-              <div style={{
-                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(184, 165, 214, 0.05))',
-                padding: '50px 40px',
-                borderRadius: '25px',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                textAlign: 'center'
-              }}>
-                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>✨💫</div>
-                <h2 style={{
-                  color: '#d4af37',
-                  fontSize: '2.2rem',
-                  marginBottom: '15px',
-                  fontWeight: 600
-                }}>
-                  Analiza tu compatibilidad ✨
-                </h2>
-                <p style={{
-                  color: '#b8a5d6',
-                  fontSize: '1.2rem',
-                  maxWidth: '600px',
-                  margin: '0 auto 30px',
-                  lineHeight: '1.6'
-                }}>
-                  Descubre la dinámica con otra persona en amor, amistad o trabajo
+            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+
+            {/* Temas */}
+            <div style={{ marginBottom: '80px' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '48px', textAlign: 'center' }}>
+                O explora por temas
+              </h2>
+
+              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                {[
+                  { key: 'love', emoji: '❤️', title: 'Amor y vínculos' },
+                  { key: 'work', emoji: '💼', title: 'Trabajo y propósito' },
+                  { key: 'health', emoji: '🌿', title: 'Salud y energía' }
+                ].map(({ key, emoji, title }) => (
+                  <button
+                    key={key}
+                    onClick={() => generateCategoryReading(key)}
+                    disabled={isGenerating}
+                    style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #DDDDDD', textAlign: 'left', cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '16px' }}
+                  >
+                    <span style={{ fontSize: '28px' }}>{emoji}</span>
+                    <span style={{ fontSize: '18px', fontWeight: 500 }}>{title}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {/* Compatibilidad */}
+            <div style={{ marginBottom: '80px' }}>
+              <div style={{ padding: '40px', background: '#F5F5F5', textAlign: 'center' }}>
+                <h3 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '16px' }}>
+                  Analiza compatibilidad
+                </h3>
+                <p style={{ color: '#666666', marginBottom: '32px' }}>
+                  Descubre la dinámica con otra persona
                 </p>
                 
                 {!showCompatibility && (
                   <button
                     onClick={() => setShowCompatibility(true)}
-                    style={{
-                      padding: '18px 45px',
-                      background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                      border: 'none',
-                      borderRadius: '15px',
-                      color: '#1a0b2e',
-                      fontSize: '1.15rem',
-                      fontWeight: 600,
-                      cursor: 'pointer',
-                      boxShadow: '0 6px 25px rgba(212, 175, 55, 0.3)',
-                      transition: 'all 0.3s ease'
-                    }}
-                    onMouseEnter={(e) => {
-                      e.currentTarget.style.transform = 'translateY(-2px)';
-                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(212, 175, 55, 0.4)';
-                    }}
-                    onMouseLeave={(e) => {
-                      e.currentTarget.style.transform = 'translateY(0)';
-                      e.currentTarget.style.boxShadow = '0 6px 25px rgba(212, 175, 55, 0.3)';
-                    }}
+                    style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                   >
-                    Analizar compatibilidad →
+                    Analizar compatibilidad
                   </button>
                 )}
 
                 {showCompatibility && !compatibilityResult && (
-                  <div style={{
-                    background: 'rgba(26, 11, 46, 0.6)',
-                    padding: '40px',
-                    borderRadius: '20px',
-                    marginTop: '30px',
-                    textAlign: 'left',
-                    maxWidth: '600px',
-                    margin: '30px auto 0'
-                  }}>
-                    <h3 style={{
-                      color: '#d4af37',
-                      fontSize: '1.5rem',
-                      marginBottom: '25px',
-                      textAlign: 'center'
-                    }}>
+                  <div style={{ background: '#FFFFFF', padding: '32px', marginTop: '32px', textAlign: 'left' }}>
+                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '24px' }}>
                       Datos de la otra persona
-                    </h3>
+                    </h4>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
                       <div>
-                        <label style={{
-                          display: 'block',
-                          color: '#b8a5d6',
-                          marginBottom: '8px',
-                          fontSize: '0.95rem'
-                        }}>
-                          📅 Fecha de Nacimiento
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
+                          Fecha de nacimiento
                         </label>
                         <input
                           type="date"
                           value={compatibilityData.date}
                           onChange={(e) => setCompatibilityData({...compatibilityData, date: e.target.value})}
-                          style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: 'rgba(26, 11, 46, 0.8)',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            borderRadius: '12px',
-                            color: '#e5e7eb',
-                            fontSize: '1rem'
-                          }}
+                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                         />
                       </div>
 
                       <div>
-                        <label style={{
-                          display: 'block',
-                          color: '#b8a5d6',
-                          marginBottom: '8px',
-                          fontSize: '0.95rem'
-                        }}>
-                          ⏰ Hora de Nacimiento
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
+                          Hora de nacimiento
                         </label>
                         <input
                           type="time"
                           value={compatibilityData.time}
                           onChange={(e) => setCompatibilityData({...compatibilityData, time: e.target.value})}
-                          style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: 'rgba(26, 11, 46, 0.8)',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            borderRadius: '12px',
-                            color: '#e5e7eb',
-                            fontSize: '1rem'
-                          }}
+                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                         />
                       </div>
 
                       <div>
-                        <label style={{
-                          display: 'block',
-                          color: '#b8a5d6',
-                          marginBottom: '8px',
-                          fontSize: '0.95rem'
-                        }}>
-                          🌍 Ciudad de Nacimiento
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
+                          Ciudad de nacimiento
                         </label>
                         <input
                           type="text"
                           value={compatibilityData.city}
                           onChange={(e) => setCompatibilityData({...compatibilityData, city: e.target.value})}
-                          placeholder="Ej: Santiago, Chile"
-                          style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: 'rgba(26, 11, 46, 0.8)',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            borderRadius: '12px',
-                            color: '#e5e7eb',
-                            fontSize: '1rem'
-                          }}
+                          placeholder="Santiago, Chile"
+                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                         />
                       </div>
 
                       <div>
-                        <label style={{
-                          display: 'block',
-                          color: '#b8a5d6',
-                          marginBottom: '8px',
-                          fontSize: '0.95rem'
-                        }}>
-                          👤 Género
+                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
+                          Género
                         </label>
                         <select
                           value={compatibilityData.gender}
                           onChange={(e) => setCompatibilityData({...compatibilityData, gender: e.target.value})}
-                          style={{
-                            width: '100%',
-                            padding: '14px',
-                            background: 'rgba(26, 11, 46, 0.8)',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            borderRadius: '12px',
-                            color: '#e5e7eb',
-                            fontSize: '1rem'
-                          }}
+                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
                         >
                           <option value="">Seleccionar...</option>
                           <option value="Femenino">Femenino</option>
@@ -1150,40 +760,17 @@ export default function Home() {
                         </select>
                       </div>
 
-                      <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
+                      <div style={{ display: 'flex', gap: '16px' }}>
                         <button
                           onClick={analyzeCompatibility}
                           disabled={isGenerating}
-                          style={{
-                            flex: 1,
-                            padding: '16px',
-                            background: 'linear-gradient(135deg, #d4af37, #f0c674)',
-                            border: 'none',
-                            borderRadius: '12px',
-                            color: '#1a0b2e',
-                            fontSize: '1.05rem',
-                            fontWeight: 600,
-                            cursor: isGenerating ? 'wait' : 'pointer',
-                            opacity: isGenerating ? 0.6 : 1
-                          }}
+                          style={{ flex: 1, padding: '14px', background: isGenerating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
                         >
                           {isGenerating ? 'Analizando...' : 'Analizar'}
                         </button>
                         <button
-                          onClick={() => {
-                            setShowCompatibility(false);
-                            setCompatibilityData({ date: '', time: '', city: '', gender: '' });
-                          }}
-                          style={{
-                            padding: '16px 30px',
-                            background: 'rgba(212, 175, 55, 0.15)',
-                            border: '1px solid rgba(212, 175, 55, 0.3)',
-                            borderRadius: '12px',
-                            color: '#d4af37',
-                            fontSize: '1.05rem',
-                            fontWeight: 500,
-                            cursor: 'pointer'
-                          }}
+                          onClick={() => { setShowCompatibility(false); setCompatibilityData({ date: '', time: '', city: '', gender: '' }); }}
+                          style={{ padding: '14px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                         >
                           Cancelar
                         </button>
@@ -1193,83 +780,31 @@ export default function Home() {
                 )}
 
                 {compatibilityResult && (
-                  <div style={{
-                    marginTop: '40px',
-                    textAlign: 'left'
-                  }}>
-                    {/* Tabs */}
-                    <div style={{
-                      display: 'flex',
-                      gap: '15px',
-                      justifyContent: 'center',
-                      marginBottom: '30px',
-                      flexWrap: 'wrap'
-                    }}>
+                  <div style={{ marginTop: '32px', textAlign: 'left' }}>
+                    <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
                       {[
-                        { key: 'love', label: '❤️ Amor' },
-                        { key: 'friendship', label: '👥 Amistad' },
-                        { key: 'work', label: '💼 Trabajo' }
+                        { key: 'love', label: 'Amor' },
+                        { key: 'friendship', label: 'Amistad' },
+                        { key: 'work', label: 'Trabajo' }
                       ].map(({ key, label }) => (
                         <button
                           key={key}
                           onClick={() => setCompatibilityTab(key)}
-                          style={{
-                            padding: '14px 30px',
-                            background: compatibilityTab === key 
-                              ? 'linear-gradient(135deg, #d4af37, #f0c674)'
-                              : 'rgba(212, 175, 55, 0.15)',
-                            border: `1px solid ${compatibilityTab === key ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'}`,
-                            borderRadius: '12px',
-                            color: compatibilityTab === key ? '#1a0b2e' : '#d4af37',
-                            fontSize: '1.05rem',
-                            fontWeight: 600,
-                            cursor: 'pointer',
-                            transition: 'all 0.3s ease'
-                          }}
+                          style={{ padding: '12px 24px', background: compatibilityTab === key ? '#000000' : 'transparent', border: `1px solid #000000`, color: compatibilityTab === key ? '#FFFFFF' : '#000000', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                         >
                           {label}
                         </button>
                       ))}
                     </div>
 
-                    {/* Contenido */}
-                    <div style={{
-                      background: 'rgba(26, 11, 46, 0.6)',
-                      padding: '40px',
-                      borderRadius: '20px',
-                      border: '1px solid rgba(212, 175, 55, 0.25)'
-                    }}>
-                      <div style={{
-                        color: '#e5e7eb',
-                        fontSize: '1.05rem',
-                        lineHeight: '1.8',
-                        whiteSpace: 'pre-wrap'
-                      }}>
-                        {compatibilityResult[compatibilityTab]}
-                      </div>
+                    <div style={{ background: '#FFFFFF', padding: '32px', fontSize: '16px', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
+                      {compatibilityResult[compatibilityTab]}
                     </div>
 
-                    <div style={{
-                      textAlign: 'center',
-                      marginTop: '30px'
-                    }}>
+                    <div style={{ textAlign: 'center', marginTop: '24px' }}>
                       <button
-                        onClick={() => {
-                          setShowCompatibility(false);
-                          setCompatibilityResult(null);
-                          setCompatibilityData({ date: '', time: '', city: '', gender: '' });
-                          setCompatibilityTab('love');
-                        }}
-                        style={{
-                          padding: '14px 35px',
-                          background: 'rgba(212, 175, 55, 0.15)',
-                          border: '1px solid rgba(212, 175, 55, 0.3)',
-                          borderRadius: '12px',
-                          color: '#d4af37',
-                          fontSize: '1rem',
-                          fontWeight: 500,
-                          cursor: 'pointer'
-                        }}
+                        onClick={() => { setShowCompatibility(false); setCompatibilityResult(null); setCompatibilityData({ date: '', time: '', city: '', gender: '' }); setCompatibilityTab('love'); }}
+                        style={{ padding: '12px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
                       >
                         Hacer otro análisis
                       </button>
@@ -1279,139 +814,41 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Explorar por Planeta - Renombrado */}
-            <div style={{
-              background: 'rgba(45, 27, 78, 0.3)',
-              padding: '40px',
-              borderRadius: '20px',
-              border: '1px solid rgba(212, 175, 55, 0.2)',
-              marginBottom: '40px'
-            }}>
-              <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-                <h2 style={{
-                  color: '#d4af37',
-                  fontSize: '1.8rem',
-                  marginBottom: '10px'
-                }}>
-                  ✨ Explorar mi mapa interno
-                </h2>
-                <p style={{
-                  color: '#b8a5d6',
-                  fontSize: '1.05rem'
-                }}>
-                  Análisis profundo de cada planeta en tu carta
-                </p>
-              </div>
-
+            {/* Planetas */}
+            <div style={{ marginBottom: '80px' }}>
               <button
                 onClick={() => setShowPlanetDetails(!showPlanetDetails)}
-                style={{
-                  width: '100%',
-                  padding: '18px',
-                  background: 'rgba(212, 175, 55, 0.1)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: '12px',
-                  color: '#d4af37',
-                  cursor: 'pointer',
-                  fontSize: '1.1rem',
-                  fontWeight: 500,
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.background = 'rgba(212, 175, 55, 0.1)';
-                }}
+                style={{ width: '100%', padding: '16px', background: 'transparent', border: '1px solid #DDDDDD', cursor: 'pointer', fontSize: '15px', fontFamily: 'inherit', fontWeight: 500 }}
               >
                 {showPlanetDetails ? '▼ Ocultar planetas' : '▶ Ver todos los planetas'}
               </button>
 
               {showPlanetDetails && (
-                <div style={{
-                  marginTop: '30px',
-                  display: 'grid',
-                  gridTemplateColumns: 'repeat(auto-fill, minmax(240px, 1fr))',
-                  gap: '20px'
-                }}>
+                <div style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '24px' }}>
                   {Object.entries(chart).map(([planet, degrees]) => {
                     const sign = getZodiacSign(degrees);
                     const deg = (degrees % 30).toFixed(1);
                     
                     return (
-                      <div
-                        key={planet}
-                        style={{
-                          background: 'linear-gradient(135deg, rgba(26, 11, 46, 0.7), rgba(45, 27, 78, 0.5))',
-                          padding: '25px',
-                          borderRadius: '15px',
-                          border: '1px solid rgba(212, 175, 55, 0.25)',
-                          transition: 'all 0.3s ease',
-                          boxShadow: '0 2px 10px rgba(0, 0, 0, 0.2)'
-                        }}
-                        onMouseEnter={(e) => {
-                          e.currentTarget.style.boxShadow = '0 4px 20px rgba(212, 175, 55, 0.15)';
-                          e.currentTarget.style.transform = 'translateY(-2px)';
-                        }}
-                        onMouseLeave={(e) => {
-                          e.currentTarget.style.boxShadow = '0 2px 10px rgba(0, 0, 0, 0.2)';
-                          e.currentTarget.style.transform = 'translateY(0)';
-                        }}
-                      >
-                        <div style={{ textAlign: 'center', marginBottom: '20px' }}>
-                          <div style={{ fontSize: '2.5rem', marginBottom: '10px' }}>
+                      <div key={planet} style={{ border: '1px solid #E5E5E5', padding: '24px' }}>
+                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
+                          <div style={{ fontSize: '32px', marginBottom: '8px' }}>
                             {getPlanetEmoji(planet)}
                           </div>
-                          <h3 style={{
-                            color: '#d4af37',
-                            margin: 0,
-                            textTransform: 'capitalize',
-                            fontSize: '1.3rem',
-                            fontWeight: 600,
-                            marginBottom: '5px'
-                          }}>
+                          <h3 style={{ fontSize: '16px', fontWeight: 500, textTransform: 'capitalize', marginBottom: '4px' }}>
                             {planet}
                           </h3>
-                          <p style={{
-                            color: '#b8a5d6',
-                            margin: 0,
-                            fontSize: '1.05rem'
-                          }}>
+                          <p style={{ fontSize: '14px', color: '#666666' }}>
                             {sign} {deg}°
                           </p>
                         </div>
                         
                         <button
-                          onClick={(e) => {
-                            e.stopPropagation();
-                            generateDeepReading(planet, degrees);
-                          }}
+                          onClick={() => generateDeepReading(planet, degrees)}
                           disabled={isGenerating}
-                          style={{
-                            width: '100%',
-                            padding: '12px',
-                            background: isGenerating ? 'rgba(212, 175, 55, 0.1)' : 'rgba(212, 175, 55, 0.15)',
-                            border: '1px solid rgba(212, 175, 55, 0.4)',
-                            borderRadius: '10px',
-                            color: '#f0c674',
-                            cursor: isGenerating ? 'wait' : 'pointer',
-                            fontSize: '0.95rem',
-                            fontWeight: 500,
-                            transition: 'all 0.3s ease',
-                            opacity: isGenerating ? 0.5 : 1
-                          }}
-                          onMouseEnter={(e) => {
-                            if (!isGenerating) {
-                              e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
-                            }
-                          }}
-                          onMouseLeave={(e) => {
-                            if (!isGenerating) {
-                              e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
-                            }
-                          }}
+                          style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid #000000', color: '#000000', cursor: isGenerating ? 'wait' : 'pointer', fontSize: '13px', fontFamily: 'inherit', fontWeight: 500 }}
                         >
-                          {isGenerating ? 'Generando...' : 'Lectura profunda →'}
+                          {isGenerating ? 'Generando...' : 'Ver lectura'}
                         </button>
                       </div>
                     );
@@ -1420,26 +857,11 @@ export default function Home() {
               )}
             </div>
 
-            {/* Botón Inicio */}
+            {/* Volver */}
             <div style={{ textAlign: 'center' }}>
               <button
                 onClick={() => setCurrentView('home')}
-                style={{
-                  padding: '12px 30px',
-                  background: 'transparent',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: '10px',
-                  color: '#d4af37',
-                  cursor: 'pointer',
-                  fontSize: '1rem',
-                  transition: 'all 0.3s ease'
-                }}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.6)';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.borderColor = 'rgba(212, 175, 55, 0.3)';
-                }}
+                style={{ padding: '12px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', cursor: 'pointer', fontSize: '14px', fontFamily: 'inherit', fontWeight: 500 }}
               >
                 ← Volver al inicio
               </button>
@@ -1447,106 +869,39 @@ export default function Home() {
           </div>
         )}
 
-        {/* MODAL DE LECTURA */}
+        {/* ===== MODAL ===== */}
         {currentReading && (
           <div
             onClick={() => setCurrentReading(null)}
-            style={{
-              position: 'fixed',
-              top: 0,
-              left: 0,
-              right: 0,
-              bottom: 0,
-              background: 'rgba(0, 0, 0, 0.95)',
-              display: 'flex',
-              alignItems: 'center',
-              justifyContent: 'center',
-              padding: '20px',
-              zIndex: 1000
-            }}
+            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              style={{
-                maxWidth: '800px',
-                width: '100%',
-                maxHeight: '90vh',
-                background: 'linear-gradient(135deg, #1a0b2e, #2d1b4e)',
-                padding: '40px',
-                borderRadius: '20px',
-                border: '1px solid rgba(212, 175, 55, 0.3)',
-                overflow: 'auto',
-                position: 'relative'
-              }}
+              style={{ maxWidth: '680px', width: '100%', maxHeight: '90vh', background: '#FFFFFF', padding: '48px', overflow: 'auto', position: 'relative' }}
             >
               <button
                 onClick={() => setCurrentReading(null)}
-                style={{
-                  position: 'absolute',
-                  top: '20px',
-                  right: '20px',
-                  background: 'rgba(45, 27, 78, 0.8)',
-                  border: '1px solid rgba(212, 175, 55, 0.3)',
-                  borderRadius: '50%',
-                  width: '40px',
-                  height: '40px',
-                  color: '#d4af37',
-                  fontSize: '1.5rem',
-                  cursor: 'pointer'
-                }}
+                style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', fontSize: '24px', cursor: 'pointer', width: '32px', height: '32px', padding: 0 }}
               >
                 ✕
               </button>
 
-              <h2 style={{ color: '#d4af37', marginBottom: '20px' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '32px' }}>
                 {currentReading.title}
               </h2>
 
               {isGenerating ? (
                 <div style={{ textAlign: 'center', padding: '40px' }}>
-                  <p style={{ color: '#b8a5d6', fontSize: '1.2rem' }}>
-                    Analizando tu configuración...
-                  </p>
+                  <p style={{ color: '#666666' }}>Generando lectura...</p>
                 </div>
               ) : (
-                <div style={{
-                  fontSize: '1.1rem',
-                  lineHeight: '1.8',
-                  color: '#e2e8f0',
-                  whiteSpace: 'pre-wrap'
-                }}>
+                <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#000000', whiteSpace: 'pre-wrap' }}>
                   {currentReading.content}
                 </div>
               )}
             </div>
           </div>
         )}
-
-        <style jsx global>{`
-          * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-          }
-          
-          body {
-            font-family: 'Crimson Pro', Georgia, serif;
-          }
-          
-          input:focus, select:focus {
-            outline: none;
-            border-color: rgba(212, 175, 55, 0.6) !important;
-          }
-          
-          button:hover:not(:disabled) {
-            opacity: 0.9;
-            transform: scale(1.02);
-          }
-          
-          button {
-            transition: all 0.3s ease;
-          }
-        `}</style>
       </div>
     </>
   );
