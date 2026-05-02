@@ -53,6 +53,9 @@ export default async function handler(req, res) {
       ascendente: calculateAscendant(astroTime, latitude, longitude)
     };
 
+    // Log para debugging
+    console.log('Calculated positions:', positions);
+
     return res.status(200).json({
       positions,
       location: {
