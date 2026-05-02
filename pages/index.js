@@ -963,27 +963,36 @@ export default function Home() {
                         </div>
                         
                         <button
-                          onClick={() => generateDeepReading(planet, degrees)}
+                          onClick={(e) => {
+                            e.stopPropagation();
+                            generateDeepReading(planet, degrees);
+                          }}
+                          disabled={isGenerating}
                           style={{
                             width: '100%',
                             padding: '12px',
-                            background: 'rgba(212, 175, 55, 0.15)',
+                            background: isGenerating ? 'rgba(212, 175, 55, 0.1)' : 'rgba(212, 175, 55, 0.15)',
                             border: '1px solid rgba(212, 175, 55, 0.4)',
                             borderRadius: '10px',
                             color: '#f0c674',
-                            cursor: 'pointer',
+                            cursor: isGenerating ? 'wait' : 'pointer',
                             fontSize: '0.95rem',
                             fontWeight: 500,
-                            transition: 'all 0.3s ease'
+                            transition: 'all 0.3s ease',
+                            opacity: isGenerating ? 0.5 : 1
                           }}
                           onMouseEnter={(e) => {
-                            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
+                            if (!isGenerating) {
+                              e.currentTarget.style.background = 'rgba(212, 175, 55, 0.25)';
+                            }
                           }}
                           onMouseLeave={(e) => {
-                            e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
+                            if (!isGenerating) {
+                              e.currentTarget.style.background = 'rgba(212, 175, 55, 0.15)';
+                            }
                           }}
                         >
-                          Lectura profunda →
+                          {isGenerating ? 'Generando...' : 'Lectura profunda →'}
                         </button>
                       </div>
                     );
