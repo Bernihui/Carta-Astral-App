@@ -33,36 +33,45 @@ export default async function handler(req, res) {
     
     console.log('Location:', { latitude, longitude, name: geoData[0].display_name });
 
-    // 2. Parsear fecha y hora
+    // 2. Calcular timezone offset (aproximado basado en longitud)
+    const timezoneOffset = Math.round(longitude / 15 * 2) / 2; // Redondear a .0 o .5
+    
+    // 3. Parsear fecha y hora
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
 
-    // 3. Llamar a FreeAstroAPI.com
-    const apiUrl = 'https://api.freeastroapi.com/api/v1/natal/calculate';
+    // 4. Llamar a FreeAstrologyAPI.com - Western Planets endpoint
+    const apiUrl = 'https://json.freeastrologyapi.com/western/planets';
     
     const apiPayload = {
       year,
       month,
-      day,
-      hour: hours,
-      minute: minutes,
-      lat: latitude,
-      lng: longitude
+      date: day,
+      hours,
+      minutes,
+      seconds: 0,
+      latitude,
+      longitude,
+      timezone: timezoneOffset,
+      config: {
+        observation_point: 'topocentric',
+        ayanamsha: 'tropical'
+      }
     };
 
-    console.log('Calling FreeAstroAPI with:', apiPayload);
+    console.log('Calling FreeAstrologyAPI with:', apiPayload);
 
     const apiResponse = await fetch(apiUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.FREEASTROAPI_KEY || '' // API key opcional para tier gratuito
+        'x-api-key': process.env.FREEASTROLOGY_API_KEY
       },
       body: JSON.stringify(apiPayload)
     });
 
     if (!apiResponse.ok) {
-      console.error('FreeAstroAPI error:', apiResponse.status);
+      console.error('FreeAstrologyAPI error:', apiResponse.status);
       const errorText = await apiResponse.text();
       console.error('Error details:', errorText);
       throw new Error(`API error: ${apiResponse.status}`);
@@ -70,36 +79,42 @@ export default async function handler(req, res) {
 
     const apiData = await apiResponse.json();
     
-    console.log('FreeAstroAPI response received');
-    console.log('Planets:', apiData.planets ? Object.keys(apiData.planets) : 'N/A');
-    console.log('Houses:', apiData.houses ? 'Available' : 'N/A');
+    console.log('FreeAstrologyAPI response received');
+    console.log('Status:', apiData.statusCode);
 
-    // 4. Extraer posiciones
-    // FreeAstroAPI devuelve en formato:
+    if (apiData.statusCode !== 200) {
+      throw new Error('API returned non-200 status');
+    }
+
+    // 5. Extraer posiciones
+    // FreeAstrologyAPI devuelve en formato:
     // {
-    //   planets: {
-    //     sun: { longitude: 123.45, ... },
-    //     moon: { longitude: 234.56, ... },
+    //   statusCode: 200,
+    //   output: [
+    //     { planet: { en: "Ascendant" }, fullDegree: 52.47, ... },
+    //     { planet: { en: "Sun" }, fullDegree: 342.41, ... },
     //     ...
-    //   },
-    //   houses: {
-    //     ascendant: { longitude: 345.67 },
-    //     ...
-    //   }
+    //   ]
     // }
 
-    const planets = apiData.planets || {};
-    const houses = apiData.houses || {};
+    const planets = apiData.output || [];
+
+    const findPlanet = (name) => {
+      const planet = planets.find(p => 
+        p.planet && p.planet.en && p.planet.en.toLowerCase() === name.toLowerCase()
+      );
+      return planet ? planet.fullDegree : 0;
+    };
 
     const positions = {
-      sol: planets.sun?.longitude || 0,
-      luna: planets.moon?.longitude || 0,
-      mercurio: planets.mercury?.longitude || 0,
-      venus: planets.venus?.longitude || 0,
-      marte: planets.mars?.longitude || 0,
-      jupiter: planets.jupiter?.longitude || 0,
-      saturno: planets.saturn?.longitude || 0,
-      ascendente: houses.ascendant?.longitude || 0
+      sol: findPlanet('Sun'),
+      luna: findPlanet('Moon'),
+      mercurio: findPlanet('Mercury'),
+      venus: findPlanet('Venus'),
+      marte: findPlanet('Mars'),
+      jupiter: findPlanet('Jupiter'),
+      saturno: findPlanet('Saturn'),
+      ascendente: findPlanet('Ascendant')
     };
 
     console.log('=== FINAL POSITIONS ===');
