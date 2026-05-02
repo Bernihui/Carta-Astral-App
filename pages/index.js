@@ -234,6 +234,15 @@ export default function Home() {
   const [showPlanetDetails, setShowPlanetDetails] = useState(false);
   const [isCalculating, setIsCalculating] = useState(false);
   const [calculationError, setCalculationError] = useState(null);
+  const [showCompatibility, setShowCompatibility] = useState(false);
+  const [compatibilityData, setCompatibilityData] = useState({
+    date: '',
+    time: '',
+    city: '',
+    gender: ''
+  });
+  const [compatibilityResult, setCompatibilityResult] = useState(null);
+  const [compatibilityTab, setCompatibilityTab] = useState('love');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -318,6 +327,86 @@ export default function Home() {
     };
     
     generateReading(prompts[category], titles[category]);
+  };
+
+  const analyzeCompatibility = async () => {
+    if (!compatibilityData.date || !compatibilityData.time || !compatibilityData.city) {
+      alert('Por favor completa todos los campos');
+      return;
+    }
+
+    setIsGenerating(true);
+    
+    try {
+      // 1. Calcular carta de la otra persona
+      const chartResponse = await fetch('/api/calculate-chart', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          date: compatibilityData.date,
+          time: compatibilityData.time,
+          city: compatibilityData.city
+        })
+      });
+
+      if (!chartResponse.ok) throw new Error('Error al calcular carta');
+      
+      const { positions: person2Positions } = await chartResponse.json();
+
+      // 2. Generar los 3 análisis en paralelo
+      const analyses = await Promise.all([
+        // Amor
+        fetch('/api/compatibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            person1: chart,
+            person2: person2Positions,
+            analysisType: 'love',
+            gender1: formData.gender,
+            gender2: compatibilityData.gender
+          })
+        }).then(r => r.json()),
+        
+        // Amistad
+        fetch('/api/compatibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            person1: chart,
+            person2: person2Positions,
+            analysisType: 'friendship',
+            gender1: formData.gender,
+            gender2: compatibilityData.gender
+          })
+        }).then(r => r.json()),
+        
+        // Trabajo
+        fetch('/api/compatibility', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            person1: chart,
+            person2: person2Positions,
+            analysisType: 'work',
+            gender1: formData.gender,
+            gender2: compatibilityData.gender
+          })
+        }).then(r => r.json())
+      ]);
+
+      setCompatibilityResult({
+        love: analyses[0].reading,
+        friendship: analyses[1].reading,
+        work: analyses[2].reading
+      });
+
+    } catch (error) {
+      console.error('Error:', error);
+      alert('Error al analizar compatibilidad');
+    } finally {
+      setIsGenerating(false);
+    }
   };
 
   const fillDemoData = () => {
@@ -876,6 +965,317 @@ export default function Home() {
                     </div>
                   </div>
                 ))}
+              </div>
+            </div>
+
+            {/* COMPATIBILIDAD */}
+            <div style={{ margin: '70px 0' }}>
+              <div style={{
+                background: 'linear-gradient(135deg, rgba(212, 175, 55, 0.08), rgba(184, 165, 214, 0.05))',
+                padding: '50px 40px',
+                borderRadius: '25px',
+                border: '1px solid rgba(212, 175, 55, 0.3)',
+                textAlign: 'center'
+              }}>
+                <div style={{ fontSize: '3rem', marginBottom: '20px' }}>✨💫</div>
+                <h2 style={{
+                  color: '#d4af37',
+                  fontSize: '2.2rem',
+                  marginBottom: '15px',
+                  fontWeight: 600
+                }}>
+                  Analiza tu compatibilidad
+                </h2>
+                <p style={{
+                  color: '#b8a5d6',
+                  fontSize: '1.2rem',
+                  maxWidth: '600px',
+                  margin: '0 auto 30px',
+                  lineHeight: '1.6'
+                }}>
+                  Descubre la dinámica con otra persona en amor, amistad o trabajo
+                </p>
+                
+                {!showCompatibility && (
+                  <button
+                    onClick={() => setShowCompatibility(true)}
+                    style={{
+                      padding: '18px 45px',
+                      background: 'linear-gradient(135deg, #d4af37, #f0c674)',
+                      border: 'none',
+                      borderRadius: '15px',
+                      color: '#1a0b2e',
+                      fontSize: '1.15rem',
+                      fontWeight: 600,
+                      cursor: 'pointer',
+                      boxShadow: '0 6px 25px rgba(212, 175, 55, 0.3)',
+                      transition: 'all 0.3s ease'
+                    }}
+                    onMouseEnter={(e) => {
+                      e.currentTarget.style.transform = 'translateY(-2px)';
+                      e.currentTarget.style.boxShadow = '0 8px 30px rgba(212, 175, 55, 0.4)';
+                    }}
+                    onMouseLeave={(e) => {
+                      e.currentTarget.style.transform = 'translateY(0)';
+                      e.currentTarget.style.boxShadow = '0 6px 25px rgba(212, 175, 55, 0.3)';
+                    }}
+                  >
+                    Analizar compatibilidad →
+                  </button>
+                )}
+
+                {showCompatibility && !compatibilityResult && (
+                  <div style={{
+                    background: 'rgba(26, 11, 46, 0.6)',
+                    padding: '40px',
+                    borderRadius: '20px',
+                    marginTop: '30px',
+                    textAlign: 'left',
+                    maxWidth: '600px',
+                    margin: '30px auto 0'
+                  }}>
+                    <h3 style={{
+                      color: '#d4af37',
+                      fontSize: '1.5rem',
+                      marginBottom: '25px',
+                      textAlign: 'center'
+                    }}>
+                      Datos de la otra persona
+                    </h3>
+
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '20px' }}>
+                      <div>
+                        <label style={{
+                          display: 'block',
+                          color: '#b8a5d6',
+                          marginBottom: '8px',
+                          fontSize: '0.95rem'
+                        }}>
+                          📅 Fecha de Nacimiento
+                        </label>
+                        <input
+                          type="date"
+                          value={compatibilityData.date}
+                          onChange={(e) => setCompatibilityData({...compatibilityData, date: e.target.value})}
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'rgba(26, 11, 46, 0.8)',
+                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                            borderRadius: '12px',
+                            color: '#e5e7eb',
+                            fontSize: '1rem'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{
+                          display: 'block',
+                          color: '#b8a5d6',
+                          marginBottom: '8px',
+                          fontSize: '0.95rem'
+                        }}>
+                          ⏰ Hora de Nacimiento
+                        </label>
+                        <input
+                          type="time"
+                          value={compatibilityData.time}
+                          onChange={(e) => setCompatibilityData({...compatibilityData, time: e.target.value})}
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'rgba(26, 11, 46, 0.8)',
+                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                            borderRadius: '12px',
+                            color: '#e5e7eb',
+                            fontSize: '1rem'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{
+                          display: 'block',
+                          color: '#b8a5d6',
+                          marginBottom: '8px',
+                          fontSize: '0.95rem'
+                        }}>
+                          🌍 Ciudad de Nacimiento
+                        </label>
+                        <input
+                          type="text"
+                          value={compatibilityData.city}
+                          onChange={(e) => setCompatibilityData({...compatibilityData, city: e.target.value})}
+                          placeholder="Ej: Santiago, Chile"
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'rgba(26, 11, 46, 0.8)',
+                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                            borderRadius: '12px',
+                            color: '#e5e7eb',
+                            fontSize: '1rem'
+                          }}
+                        />
+                      </div>
+
+                      <div>
+                        <label style={{
+                          display: 'block',
+                          color: '#b8a5d6',
+                          marginBottom: '8px',
+                          fontSize: '0.95rem'
+                        }}>
+                          👤 Género
+                        </label>
+                        <select
+                          value={compatibilityData.gender}
+                          onChange={(e) => setCompatibilityData({...compatibilityData, gender: e.target.value})}
+                          style={{
+                            width: '100%',
+                            padding: '14px',
+                            background: 'rgba(26, 11, 46, 0.8)',
+                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                            borderRadius: '12px',
+                            color: '#e5e7eb',
+                            fontSize: '1rem'
+                          }}
+                        >
+                          <option value="">Seleccionar...</option>
+                          <option value="Femenino">Femenino</option>
+                          <option value="Masculino">Masculino</option>
+                          <option value="No binario">No binario</option>
+                          <option value="Prefiero no decir">Prefiero no decir</option>
+                        </select>
+                      </div>
+
+                      <div style={{ display: 'flex', gap: '15px', marginTop: '10px' }}>
+                        <button
+                          onClick={analyzeCompatibility}
+                          disabled={isGenerating}
+                          style={{
+                            flex: 1,
+                            padding: '16px',
+                            background: 'linear-gradient(135deg, #d4af37, #f0c674)',
+                            border: 'none',
+                            borderRadius: '12px',
+                            color: '#1a0b2e',
+                            fontSize: '1.05rem',
+                            fontWeight: 600,
+                            cursor: isGenerating ? 'wait' : 'pointer',
+                            opacity: isGenerating ? 0.6 : 1
+                          }}
+                        >
+                          {isGenerating ? 'Analizando...' : 'Analizar'}
+                        </button>
+                        <button
+                          onClick={() => {
+                            setShowCompatibility(false);
+                            setCompatibilityData({ date: '', time: '', city: '', gender: '' });
+                          }}
+                          style={{
+                            padding: '16px 30px',
+                            background: 'rgba(212, 175, 55, 0.15)',
+                            border: '1px solid rgba(212, 175, 55, 0.3)',
+                            borderRadius: '12px',
+                            color: '#d4af37',
+                            fontSize: '1.05rem',
+                            fontWeight: 500,
+                            cursor: 'pointer'
+                          }}
+                        >
+                          Cancelar
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {compatibilityResult && (
+                  <div style={{
+                    marginTop: '40px',
+                    textAlign: 'left'
+                  }}>
+                    {/* Tabs */}
+                    <div style={{
+                      display: 'flex',
+                      gap: '15px',
+                      justifyContent: 'center',
+                      marginBottom: '30px',
+                      flexWrap: 'wrap'
+                    }}>
+                      {[
+                        { key: 'love', label: '❤️ Amor' },
+                        { key: 'friendship', label: '👥 Amistad' },
+                        { key: 'work', label: '💼 Trabajo' }
+                      ].map(({ key, label }) => (
+                        <button
+                          key={key}
+                          onClick={() => setCompatibilityTab(key)}
+                          style={{
+                            padding: '14px 30px',
+                            background: compatibilityTab === key 
+                              ? 'linear-gradient(135deg, #d4af37, #f0c674)'
+                              : 'rgba(212, 175, 55, 0.15)',
+                            border: `1px solid ${compatibilityTab === key ? '#d4af37' : 'rgba(212, 175, 55, 0.3)'}`,
+                            borderRadius: '12px',
+                            color: compatibilityTab === key ? '#1a0b2e' : '#d4af37',
+                            fontSize: '1.05rem',
+                            fontWeight: 600,
+                            cursor: 'pointer',
+                            transition: 'all 0.3s ease'
+                          }}
+                        >
+                          {label}
+                        </button>
+                      ))}
+                    </div>
+
+                    {/* Contenido */}
+                    <div style={{
+                      background: 'rgba(26, 11, 46, 0.6)',
+                      padding: '40px',
+                      borderRadius: '20px',
+                      border: '1px solid rgba(212, 175, 55, 0.25)'
+                    }}>
+                      <div style={{
+                        color: '#e5e7eb',
+                        fontSize: '1.05rem',
+                        lineHeight: '1.8',
+                        whiteSpace: 'pre-wrap'
+                      }}>
+                        {compatibilityResult[compatibilityTab]}
+                      </div>
+                    </div>
+
+                    <div style={{
+                      textAlign: 'center',
+                      marginTop: '30px'
+                    }}>
+                      <button
+                        onClick={() => {
+                          setShowCompatibility(false);
+                          setCompatibilityResult(null);
+                          setCompatibilityData({ date: '', time: '', city: '', gender: '' });
+                          setCompatibilityTab('love');
+                        }}
+                        style={{
+                          padding: '14px 35px',
+                          background: 'rgba(212, 175, 55, 0.15)',
+                          border: '1px solid rgba(212, 175, 55, 0.3)',
+                          borderRadius: '12px',
+                          color: '#d4af37',
+                          fontSize: '1rem',
+                          fontWeight: 500,
+                          cursor: 'pointer'
+                        }}
+                      >
+                        Hacer otro análisis
+                      </button>
+                    </div>
+                  </div>
+                )}
               </div>
             </div>
 
