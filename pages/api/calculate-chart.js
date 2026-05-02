@@ -38,7 +38,7 @@ export default async function handler(req, res) {
     const [hours, minutes] = time.split(':').map(Number);
 
     // 3. Llamar a FreeAstroAPI.com
-    const apiUrl = 'https://api.freeastroapi.com/v1/natal-chart';
+    const apiUrl = 'https://api.freeastroapi.com/api/v1/natal/calculate';
     
     const apiPayload = {
       year,
@@ -46,9 +46,8 @@ export default async function handler(req, res) {
       day,
       hour: hours,
       minute: minutes,
-      latitude,
-      longitude,
-      // house_system: 'placidus' // Por defecto ya usa Placidus
+      lat: latitude,
+      lng: longitude
     };
 
     console.log('Calling FreeAstroAPI with:', apiPayload);
@@ -57,7 +56,7 @@ export default async function handler(req, res) {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-        'x-api-key': process.env.FREEASTROAPI_KEY || 'demo' // Sin API key funciona con límites menores
+        'x-api-key': process.env.FREEASTROAPI_KEY || '' // API key opcional para tier gratuito
       },
       body: JSON.stringify(apiPayload)
     });
