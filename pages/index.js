@@ -201,7 +201,20 @@ const calculatePlanetaryPositions = async (birthDate, birthTime, city) => {
 const getZodiacSign = (degrees) => {
   const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                  'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
-  return signs[Math.floor(degrees / 30)];
+  
+  // Validar que degrees sea un número válido
+  if (degrees === undefined || degrees === null || isNaN(degrees)) {
+    return 'undefined';
+  }
+  
+  // Normalizar a rango 0-360
+  let normalizedDegrees = degrees % 360;
+  if (normalizedDegrees < 0) normalizedDegrees += 360;
+  
+  // Calcular índice del signo
+  const index = Math.floor(normalizedDegrees / 30);
+  
+  return signs[index] || 'undefined';
 };
 
 const getPlanetEmoji = (planet) => {
@@ -274,6 +287,12 @@ export default function Home() {
   };
 
   const generateDeepReading = (planet, degrees) => {
+    // Validar que degrees sea un número válido
+    if (degrees === undefined || degrees === null || isNaN(degrees)) {
+      alert('Error: No se pudo obtener la posición de ' + planet + '. Por favor intenta generar la carta nuevamente.');
+      return;
+    }
+    
     const sign = getZodiacSign(degrees);
     const degree = (degrees % 30).toFixed(1);
     const prompt = PROMPTS.deepReading(planet, sign, degree, formData);
