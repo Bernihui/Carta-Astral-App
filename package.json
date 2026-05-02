@@ -13,6 +13,6 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "@anthropic-ai/sdk": "^0.20.0",
-    "swisseph": "^3.0.0"
+    "swisseph": "^2.10.3"
   }
 }
