@@ -1,5 +1,4 @@
 // pages/api/calculate-chart.js
-import Astronomy from 'astronomy-engine';
 
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
@@ -35,26 +34,36 @@ export default async function handler(req, res) {
     const [year, month, day] = date.split('-').map(Number);
     const [hours, minutes] = time.split(':').map(Number);
     
-    // Crear objeto Date en timezone local
-    const dateTime = new Date(year, month - 1, day, hours, minutes);
+    // Crear fecha UTC
+    const dateTime = new Date(Date.UTC(year, month - 1, day, hours, minutes));
     
-    // Convertir a objeto AstroTime de astronomy-engine
-    const astroTime = Astronomy.MakeTime(dateTime);
+    // 3. Calcular día juliano
+    const JD = getJulianDay(dateTime);
     
-    // 3. Calcular posiciones planetarias
+    // 4. Calcular posiciones planetarias usando fórmulas astronómicas
     const positions = {
-      sol: getPlanetEclipticLongitude('Sun', astroTime),
-      luna: getMoonEclipticLongitude(astroTime),
-      mercurio: getPlanetEclipticLongitude('Mercury', astroTime),
-      venus: getPlanetEclipticLongitude('Venus', astroTime),
-      marte: getPlanetEclipticLongitude('Mars', astroTime),
-      jupiter: getPlanetEclipticLongitude('Jupiter', astroTime),
-      saturno: getPlanetEclipticLongitude('Saturn', astroTime),
-      ascendente: calculateAscendant(astroTime, latitude, longitude)
+      sol: getSunLongitude(JD),
+      luna: getMoonLongitude(JD),
+      mercurio: getPlanetLongitude('mercury', JD),
+      venus: getPlanetLongitude('venus', JD),
+      marte: getPlanetLongitude('mars', JD),
+      jupiter: getPlanetLongitude('jupiter', JD),
+      saturno: getPlanetLongitude('saturn', JD),
+      ascendente: getAscendant(JD, latitude, longitude)
     };
 
     // Log para debugging
     console.log('Calculated positions:', positions);
+    console.log('Date:', dateTime);
+    console.log('JD:', JD);
+    console.log('Location:', { latitude, longitude });
+
+    // Validar que todos los valores sean números válidos
+    Object.keys(positions).forEach(key => {
+      if (isNaN(positions[key]) || positions[key] < 0 || positions[key] >= 360) {
+        console.error(`Invalid position for ${key}:`, positions[key]);
+      }
+    });
 
     return res.status(200).json({
       positions,
@@ -74,70 +83,132 @@ export default async function handler(req, res) {
   }
 }
 
-// Helper: Obtener longitud eclíptica de un planeta
-function getPlanetEclipticLongitude(bodyName, time) {
-  // Obtener la posición ecuatorial del planeta
-  const equator = Astronomy.Equator(bodyName, time, null, true, true);
+// Calcular día juliano
+function getJulianDay(date) {
+  const a = Math.floor((14 - (date.getUTCMonth() + 1)) / 12);
+  const y = date.getUTCFullYear() + 4800 - a;
+  const m = (date.getUTCMonth() + 1) + 12 * a - 3;
   
-  // Convertir a coordenadas eclípticas
-  const ecliptic = Astronomy.Ecliptic(equator);
+  let jdn = date.getUTCDate() + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045;
   
-  // La longitud eclíptica - normalizar a 0-360 grados
-  let lon = ecliptic.elon;
-  
-  // Asegurar que esté en rango 0-360
-  lon = lon % 360;
-  if (lon < 0) lon += 360;
-  
-  return lon;
+  const hours = date.getUTCHours() + date.getUTCMinutes() / 60 + date.getUTCSeconds() / 3600;
+  return jdn + (hours - 12) / 24;
 }
 
-// Helper: Obtener longitud eclíptica de la Luna
-function getMoonEclipticLongitude(time) {
-  const equator = Astronomy.Equator('Moon', time, null, true, true);
-  const ecliptic = Astronomy.Ecliptic(equator);
-  
-  let lon = ecliptic.elon;
-  
-  // Asegurar que esté en rango 0-360
-  lon = lon % 360;
-  if (lon < 0) lon += 360;
-  
-  return lon;
+// Normalizar ángulo a rango 0-360
+function normalize(angle) {
+  let result = angle % 360;
+  if (result < 0) result += 360;
+  return result;
 }
 
-// Helper: Calcular Ascendente
-function calculateAscendant(time, latitude, longitude) {
-  // Obtener el tiempo sideral local en horas
-  const siderealTime = Astronomy.SiderealTime(time);
+// Calcular longitud del Sol
+function getSunLongitude(JD) {
+  const T = (JD - 2451545.0) / 36525.0;
   
-  // Convertir longitud a horas (15 grados = 1 hora)
-  const localSiderealTime = siderealTime + (longitude / 15.0);
+  // Longitud media del Sol
+  const L0 = 280.46646 + 36000.76983 * T + 0.0003032 * T * T;
   
-  // Normalizar a 0-24 horas
-  let lst = localSiderealTime % 24;
-  if (lst < 0) lst += 24;
+  // Anomalía media del Sol
+  const M = 357.52911 + 35999.05029 * T - 0.0001537 * T * T;
+  const M_rad = M * Math.PI / 180;
   
-  // Convertir LST a grados (RAMC - Right Ascension of Midheaven)
-  const ramc = lst * 15.0;
+  // Ecuación del centro
+  const C = (1.914602 - 0.004817 * T - 0.000014 * T * T) * Math.sin(M_rad)
+          + (0.019993 - 0.000101 * T) * Math.sin(2 * M_rad)
+          + 0.000289 * Math.sin(3 * M_rad);
   
-  // Oblicuidad de la eclíptica para esta fecha
-  const obliquity = 23.4397; // Aproximación (podría mejorarse con cálculo exacto)
+  // Longitud verdadera
+  const sunLon = L0 + C;
+  
+  return normalize(sunLon);
+}
+
+// Calcular longitud de la Luna
+function getMoonLongitude(JD) {
+  const T = (JD - 2451545.0) / 36525.0;
+  
+  // Longitud media de la Luna
+  const L = 218.3164477 + 481267.88123421 * T - 0.0015786 * T * T;
+  
+  // Anomalía media de la Luna
+  const M = 134.9633964 + 477198.8675055 * T + 0.0087414 * T * T;
+  
+  // Anomalía media del Sol
+  const M_sun = 357.5291092 + 35999.0502909 * T;
+  
+  // Argumento de latitud
+  const F = 93.2720950 + 483202.0175233 * T - 0.0036539 * T * T;
+  
+  const M_rad = M * Math.PI / 180;
+  const M_sun_rad = M_sun * Math.PI / 180;
+  const F_rad = F * Math.PI / 180;
+  
+  // Términos principales de perturbación
+  let moonLon = L 
+    + 6.288774 * Math.sin(M_rad)
+    + 1.274027 * Math.sin(2 * F_rad - M_rad)
+    + 0.658314 * Math.sin(2 * F_rad)
+    + 0.213618 * Math.sin(2 * M_rad)
+    - 0.185116 * Math.sin(M_sun_rad)
+    - 0.114332 * Math.sin(2 * F_rad);
+  
+  return normalize(moonLon);
+}
+
+// Calcular longitud de planetas (aproximación simplificada)
+function getPlanetLongitude(planet, JD) {
+  const T = (JD - 2451545.0) / 36525.0;
+  
+  const orbitalElements = {
+    mercury: { L0: 252.25, rate: 149472.67, e: 0.205635, a: 0.387098 },
+    venus:   { L0: 181.98, rate: 58517.82, e: 0.006772, a: 0.723330 },
+    mars:    { L0: 355.43, rate: 19140.30, e: 0.093377, a: 1.523688 },
+    jupiter: { L0: 34.35, rate: 3034.74, e: 0.048892, a: 5.202603 },
+    saturn:  { L0: 50.08, rate: 1222.11, e: 0.055581, a: 9.554909 }
+  };
+  
+  const elem = orbitalElements[planet];
+  if (!elem) return 0;
+  
+  // Longitud media
+  const L = elem.L0 + elem.rate * T;
+  
+  // Anomalía media
+  const M = L - 102.94;
+  const M_rad = M * Math.PI / 180;
+  
+  // Ecuación del centro (simplificada)
+  const C = (2 * elem.e - 0.25 * elem.e * elem.e * elem.e) * Math.sin(M_rad)
+          + 1.25 * elem.e * elem.e * Math.sin(2 * M_rad);
+  
+  const lon = L + C;
+  
+  return normalize(lon);
+}
+
+// Calcular Ascendente
+function getAscendant(JD, latitude, longitude) {
+  // Tiempo sideral de Greenwich
+  const T = (JD - 2451545.0) / 36525.0;
+  const theta0 = 280.46061837 + 360.98564736629 * (JD - 2451545.0) + 0.000387933 * T * T;
+  
+  // Tiempo sideral local
+  const theta = normalize(theta0 + longitude);
+  
+  // Oblicuidad de la eclíptica
+  const epsilon = 23.439291 - 0.0130042 * T;
+  const epsilon_rad = epsilon * Math.PI / 180;
   
   // Convertir a radianes
-  const latRad = latitude * Math.PI / 180;
-  const ramcRad = ramc * Math.PI / 180;
-  const oblRad = obliquity * Math.PI / 180;
+  const theta_rad = theta * Math.PI / 180;
+  const lat_rad = latitude * Math.PI / 180;
   
-  // Fórmula para calcular el ascendente
-  const y = -Math.sin(ramcRad);
-  const x = Math.cos(ramcRad) * Math.cos(oblRad) + Math.tan(latRad) * Math.sin(oblRad);
+  // Calcular ascendente
+  const y = -Math.sin(theta_rad);
+  const x = Math.cos(theta_rad) * Math.cos(epsilon_rad) + Math.tan(lat_rad) * Math.sin(epsilon_rad);
   
   let asc = Math.atan2(y, x) * 180 / Math.PI;
   
-  // Asegurar que esté en rango 0-360
-  asc = asc % 360;
-  if (asc < 0) asc += 360;
-  
-  return asc;
+  return normalize(asc);
 }
