@@ -79,12 +79,12 @@ function getPlanetEclipticLongitude(bodyName, time) {
   // Convertir a coordenadas eclípticas
   const ecliptic = Astronomy.Ecliptic(equator);
   
-  // La longitud eclíptica ya está en grados 0-360
+  // La longitud eclíptica - normalizar a 0-360 grados
   let lon = ecliptic.elon;
   
-  // Normalizar a 0-360 grados
-  while (lon < 0) lon += 360;
-  while (lon >= 360) lon -= 360;
+  // Asegurar que esté en rango 0-360
+  lon = lon % 360;
+  if (lon < 0) lon += 360;
   
   return lon;
 }
@@ -95,8 +95,10 @@ function getMoonEclipticLongitude(time) {
   const ecliptic = Astronomy.Ecliptic(equator);
   
   let lon = ecliptic.elon;
-  while (lon < 0) lon += 360;
-  while (lon >= 360) lon -= 360;
+  
+  // Asegurar que esté en rango 0-360
+  lon = lon % 360;
+  if (lon < 0) lon += 360;
   
   return lon;
 }
@@ -110,9 +112,8 @@ function calculateAscendant(time, latitude, longitude) {
   const localSiderealTime = siderealTime + (longitude / 15.0);
   
   // Normalizar a 0-24 horas
-  let lst = localSiderealTime;
-  while (lst < 0) lst += 24;
-  while (lst >= 24) lst -= 24;
+  let lst = localSiderealTime % 24;
+  if (lst < 0) lst += 24;
   
   // Convertir LST a grados (RAMC - Right Ascension of Midheaven)
   const ramc = lst * 15.0;
@@ -131,9 +132,9 @@ function calculateAscendant(time, latitude, longitude) {
   
   let asc = Math.atan2(y, x) * 180 / Math.PI;
   
-  // Normalizar a 0-360
-  while (asc < 0) asc += 360;
-  while (asc >= 360) asc -= 360;
+  // Asegurar que esté en rango 0-360
+  asc = asc % 360;
+  if (asc < 0) asc += 360;
   
   return asc;
 }
