@@ -1,5 +1,4 @@
 // pages/api/generate-reading.js
-import Anthropic from '@anthropic-ai/sdk';
 
 export default async function handler(req, res) {
   // Solo permitir POST
@@ -9,10 +8,13 @@ export default async function handler(req, res) {
 
   try {
     const { prompt } = req.body;
-
+    
     if (!prompt) {
       return res.status(400).json({ error: 'Prompt is required' });
     }
+
+    // Import dinámico para evitar problemas de ESM
+    const Anthropic = (await import('@anthropic-ai/sdk')).default;
 
     // Inicializar cliente de Anthropic con la API key
     const anthropic = new Anthropic({
