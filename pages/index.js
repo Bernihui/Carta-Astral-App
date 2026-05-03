@@ -1,7 +1,53 @@
-// pages/index.js - VERSIÓN OPTIMIZADA CON NUEVO ONBOARDING
+// pages/index.js - CON LOGO LUMINA
 import { useState } from 'react';
 import Head from 'next/head';
 import styles from '../styles/Home.module.css';
+
+// ========== LOGO LUMINA SVG ==========
+const LuminaLogo = ({ size = 40, showText = true, textSize = 18 }) => (
+  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
+    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <defs>
+        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+          <stop offset="0%" style={{ stopColor: '#8B5CF6', stopOpacity: 1 }} />
+          <stop offset="50%" style={{ stopColor: '#A78BFA', stopOpacity: 1 }} />
+          <stop offset="100%" style={{ stopColor: '#67E8F9', stopOpacity: 1 }} />
+        </linearGradient>
+      </defs>
+      
+      {/* Forma orgánica externa */}
+      <path
+        d="M50 10 C30 10, 15 25, 15 45 C15 55, 20 65, 30 70 C35 72, 40 75, 45 80 C47 83, 48 88, 50 90 C52 88, 53 83, 55 80 C60 75, 65 72, 70 70 C80 65, 85 55, 85 45 C85 25, 70 10, 50 10 Z"
+        fill="none"
+        stroke="url(#logoGradient)"
+        strokeWidth="3"
+        strokeLinecap="round"
+      />
+      
+      {/* Estrella central */}
+      <g transform="translate(50, 50)">
+        <line x1="0" y1="-15" x2="0" y2="15" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
+        <line x1="-15" y1="0" x2="15" y2="0" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
+        <line x1="-11" y1="-11" x2="11" y2="11" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
+        <line x1="11" y1="-11" x2="-11" y2="11" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
+      </g>
+    </svg>
+    
+    {showText && (
+      <span style={{
+        fontSize: `${textSize}px`,
+        fontWeight: 500,
+        letterSpacing: '0.1em',
+        background: 'linear-gradient(90deg, #A78BFA, #67E8F9)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        backgroundClip: 'text'
+      }}>
+        lumina
+      </span>
+    )}
+  </div>
+);
 
 // ========== SISTEMA DE PROMPTS (MANTENER IGUAL) ==========
 const PROMPTS = {
@@ -80,7 +126,6 @@ Posiciones: Sol ${getZodiacSign(chartData.sol)}, Luna ${getZodiacSign(chartData.
 Extensión: 600-700 palabras`;
   },
 
-  // NUEVO: Insight diario accionable
   dailyInsight: (chartData, birthData) => {
     const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                    'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
@@ -152,10 +197,9 @@ const getPlanetEmoji = (planet) => {
 
 // ========== COMPONENTE PRINCIPAL ==========
 export default function Home() {
-  // Estados
-  const [currentView, setCurrentView] = useState('home'); // home, form, loading, wow, results
+  const [currentView, setCurrentView] = useState('home');
   const [formData, setFormData] = useState({ date: '', time: '', city: '' });
-  const [userInfo, setUserInfo] = useState({ name: '', gender: '' }); // Se captura DESPUÉS
+  const [userInfo, setUserInfo] = useState({ name: '', gender: '' });
   const [chart, setChart] = useState(null);
   const [dailyInsightText, setDailyInsightText] = useState(null);
   const [currentReading, setCurrentReading] = useState(null);
@@ -166,7 +210,6 @@ export default function Home() {
   const [compatibilityResult, setCompatibilityResult] = useState(null);
   const [compatibilityTab, setCompatibilityTab] = useState('love');
 
-  // Handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
     setCurrentView('loading');
@@ -175,7 +218,6 @@ export default function Home() {
       const positions = await calculatePlanetaryPositions(formData.date, formData.time, formData.city);
       setChart(positions);
       
-      // Generar insight diario
       const insightPrompt = PROMPTS.dailyInsight(positions, formData);
       const insightResponse = await fetch('/api/generate-reading', {
         method: 'POST',
@@ -186,7 +228,6 @@ export default function Home() {
       const insightData = await insightResponse.json();
       setDailyInsightText(insightData.content);
       
-      // Ir al WOW moment
       setTimeout(() => {
         setCurrentView('wow');
       }, 2000);
@@ -341,7 +382,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>Carta Astral</title>
+        <title>Lumina - Ilumina tu camino</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
       </Head>
@@ -352,7 +393,9 @@ export default function Home() {
         {currentView === 'home' && (
           <div className={styles.pageContainer}>
             <div className={styles.header}>
-              <div className={styles.logo}>Carta Astral</div>
+              <div className={styles.logo}>
+                <LuminaLogo size={50} showText={true} textSize={20} />
+              </div>
               
               <h1 className={styles.headline}>
                 Entiende lo que te está pasando hoy.
@@ -374,7 +417,6 @@ export default function Home() {
 
             <div className={styles.divider}></div>
 
-            {/* Features */}
             <div className={styles.features}>
               <h2 className={styles.featuresTitle}>Qué vas a descubrir</h2>
               
@@ -398,7 +440,6 @@ export default function Home() {
 
             <div className={styles.divider}></div>
 
-            {/* Example */}
             <div className={styles.exampleBox}>
               <p className={styles.exampleText}>
                 "Eres Libra, pero no solo buscas armonía. Hay en ti una necesidad profunda de construir vínculos justos, inteligentes y sostenibles."
@@ -433,7 +474,11 @@ export default function Home() {
               ← Volver
             </button>
 
-            <h1 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '48px' }}>
+            <div style={{ textAlign: 'center', marginBottom: '48px' }}>
+              <LuminaLogo size={40} showText={true} textSize={18} />
+            </div>
+
+            <h1 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '48px', textAlign: 'center' }}>
               Tu Carta Astral
             </h1>
 
@@ -458,7 +503,7 @@ export default function Home() {
                   required
                   className={styles.formInput}
                 />
-                <p style={{ fontSize: '14px', color: '#999999', marginTop: '8px' }}>
+                <p style={{ fontSize: '14px', color: '#A78BFA', marginTop: '8px' }}>
                   Si no conoces tu hora exacta, usa 12:00
                 </p>
               </div>
@@ -490,10 +535,13 @@ export default function Home() {
         {currentView === 'loading' && (
           <div className={styles.pageContainer}>
             <div style={{ textAlign: 'center', paddingTop: '120px' }}>
+              <div style={{ marginBottom: '40px' }}>
+                <LuminaLogo size={60} showText={false} />
+              </div>
               <h2 style={{ fontSize: '24px', fontWeight: 400, marginBottom: '16px' }}>
                 Estamos preparando tu lectura personalizada...
               </h2>
-              <p style={{ color: '#666666', fontSize: '16px' }}>
+              <p style={{ color: '#C4B5FD', fontSize: '16px' }}>
                 Esto tomará solo unos segundos
               </p>
             </div>
@@ -504,23 +552,28 @@ export default function Home() {
         {currentView === 'wow' && dailyInsightText && (
           <div className={styles.pageContainer}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <div style={{ marginBottom: '40px' }}>
+                <LuminaLogo size={50} showText={true} textSize={18} />
+              </div>
+              
               <h2 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '40px' }}>
                 Hoy para ti
               </h2>
               
               <div style={{
                 padding: '40px',
-                background: '#F5F5F5',
-                borderLeft: '4px solid #000000',
+                background: 'linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1))',
+                borderLeft: '4px solid #8B5CF6',
+                borderRadius: '16px',
                 textAlign: 'left',
                 marginBottom: '40px'
               }}>
-                <p style={{ fontSize: '18px', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
+                <p style={{ fontSize: '18px', lineHeight: '1.7', whiteSpace: 'pre-wrap', color: '#E0E7FF' }}>
                   {dailyInsightText}
                 </p>
               </div>
 
-              <p style={{ color: '#666666', marginBottom: '32px' }}>
+              <p style={{ color: '#A78BFA', marginBottom: '32px' }}>
                 Esto es solo una parte de tu carta
               </p>
 
@@ -538,7 +591,6 @@ export default function Home() {
         {currentView === 'results' && chart && (
           <div className={styles.pageContainer}>
             
-            {/* Big 3 */}
             <div className={styles.big3Container}>
               <div className={styles.big3Grid}>
                 {[
@@ -566,7 +618,6 @@ export default function Home() {
 
             <div className={styles.divider}></div>
 
-            {/* Temas */}
             <div>
               <h2 className={styles.featuresTitle}>O explora por temas</h2>
 
@@ -794,7 +845,8 @@ export default function Home() {
 
               {isGenerating ? (
                 <div className={styles.loading}>
-                  <p>Generando lectura...</p>
+                  <LuminaLogo size={40} showText={false} />
+                  <p style={{ marginTop: '20px' }}>Generando lectura...</p>
                 </div>
               ) : (
                 <div className={styles.modalBody}>
