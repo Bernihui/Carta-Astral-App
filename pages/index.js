@@ -1,9 +1,9 @@
-// pages/index.js - VERSIÓN MINIMALISTA
-// 100% funcionalidad original, diseño ultra-limpio
+// pages/index.js - VERSIÓN OPTIMIZADA CON NUEVO ONBOARDING
 import { useState } from 'react';
 import Head from 'next/head';
+import styles from '../styles/Home.module.css';
 
-// [TODO EL CÓDIGO DE PROMPTS SE MANTIENE IGUAL]
+// ========== SISTEMA DE PROMPTS (MANTENER IGUAL) ==========
 const PROMPTS = {
   deepReading: (planet, sign, degree, birthData) => `Eres un astrólogo experto con profundo conocimiento de la astrología moderna y psicológica.
 
@@ -14,25 +14,15 @@ Datos de la carta natal:
 - Fecha de nacimiento: ${birthData.date}
 - Hora: ${birthData.time}
 - Lugar: ${birthData.city}
-- Género: ${birthData.gender}
 
 Genera una lectura profunda y personalizada de ${planet} en ${sign} que incluya:
+1. **Energía Core**: Explica la esencia y cómo se manifiesta
+2. **Manifestación Práctica**: Cómo se expresa en la vida diaria
+3. **Desafíos y Oportunidades**: Los retos y cómo aprovecharlos
+4. **Integración**: Consejos prácticos
+5. **Potencial Evolutivo**: Hacia dónde puede desarrollarse
 
-1. **Energía Core**: Explica la esencia de esta colocación y cómo se manifiesta en la personalidad
-2. **Manifestación Práctica**: Cómo se expresa esto en la vida diaria con ejemplos concretos
-3. **Desafíos y Oportunidades**: Los retos que puede presentar y cómo aprovecharlos para crecimiento
-4. **Integración**: Consejos prácticos para trabajar conscientemente con esta energía
-5. **Potencial Evolutivo**: Hacia dónde puede desarrollarse esta colocación con trabajo personal
-
-La lectura debe ser:
-- Profunda pero accesible, evitando jerga excesiva
-- Personalizada, no genérica
-- Empoderadora y orientada al crecimiento
-- Aproximadamente 400-500 palabras
-- Escrita en segunda persona (tú/tu) para crear conexión
-- Adapta el lenguaje según el género: ${birthData.gender}
-
-Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experimentado.`,
+La lectura debe ser profunda pero accesible, personalizada, empoderadora, ~400-500 palabras, en segunda persona.`,
 
   completeAnalysis: (chartData, birthData) => {
     const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
@@ -46,90 +36,11 @@ Mantén un tono cálido, sabio y compasivo, como un mentor astrológico experime
     const venusSign = getSignName(chartData.venus);
     const marteSign = getSignName(chartData.marte);
     
-    return `Actúa como un astrólogo experto con enfoque psicológico y estratégico (NO místico superficial).
-
-Datos: ${birthData.date} | ${birthData.time} | ${birthData.city} | ${birthData.gender}
-
+    return `Actúa como un astrólogo experto con enfoque psicológico.
+Datos: ${birthData.date} | ${birthData.time} | ${birthData.city}
 Posiciones: Sol ${solSign} • Luna ${lunaSign} • Asc ${ascSign} • Mercurio ${mercurioSign} • Venus ${venusSign} • Marte ${marteSign}
 
-Construye una lectura CONCISA pero PROFUNDA (600-700 palabras total). Cada sección debe ser directa, específica y sin relleno.
-
----
-
-🌞 **Tu esencia: Sol en ${solSign}**
-
-En 2-3 frases: quién eres en el núcleo, qué te mueve.
-
-**Luz:** 2 fortalezas concretas
-**Sombra:** 2 patrones limitantes reales
-
----
-
-🌙 **Mundo emocional: Luna en ${lunaSign}**
-
-Cómo sientes realmente (no lo que muestras). Qué necesitas para sentirte seguro/a.
-
-👉 1 frase de cierre sobre tu patrón emocional
-
----
-
-⬆️ **Ascendente: ${ascSign}**
-
-Cómo te perciben vs. cómo eres por dentro. En 2 frases.
-
----
-
-🧠 **Mente: Mercurio en ${mercurioSign}**
-
-Cómo piensas y comunicas. 1 ejemplo concreto (trabajo/conversaciones).
-
----
-
-❤️ **Amor: Venus en ${venusSign}**
-
-Cómo amas y qué valoras. 1 patrón o riesgo específico.
-
----
-
-🔥 **Acción: Marte en ${marteSign}**
-
-Qué te motiva y cómo enfrentas conflicto. **Luz** y **sombra** en 1 frase cada una.
-
----
-
-🧩 **Tema central**
-
-👉 [Tensión X vs Y]
-Explica en 2 frases cómo se vive en la realidad.
-
----
-
-💡 **Lo más potente**
-
-3 insights únicos (1 línea cada uno)
-
----
-
-⚠️ **Desafíos**
-
-3 patrones claros (1 línea cada uno)
-
----
-
-🧭 **En simple**
-
-"[Arquetipo/resumen en 1 frase potente]"
-
----
-
-**REGLAS CRÍTICAS:**
-- MÁXIMO 700 palabras TOTAL
-- Cero relleno, cero misticismo
-- Lenguaje directo y contemporáneo
-- Conecta TODO con comportamiento real
-- Usa segunda persona (tú/tu) según género: ${birthData.gender}
-- Usa negritas (**texto**) para énfasis
-- Cada sección BREVE pero PRECISA`;
+Construye una lectura CONCISA pero PROFUNDA (600-700 palabras total).`;
   },
 
   loveReading: (chartData, birthData) => {
@@ -140,7 +51,7 @@ Explica en 2 frases cómo se vive en la realidad.
     };
     
     return `Lectura especializada en amor y relaciones.
-Fecha: ${birthData.date} | Hora: ${birthData.time} | Lugar: ${birthData.city} | Género: ${birthData.gender}
+Fecha: ${birthData.date} | Hora: ${birthData.time} | Lugar: ${birthData.city}
 Posiciones: Venus ${getZodiacSign(chartData.venus)}, Marte ${getZodiacSign(chartData.marte)}, Luna ${getZodiacSign(chartData.luna)}
 Extensión: 600-700 palabras`;
   },
@@ -153,8 +64,7 @@ Extensión: 600-700 palabras`;
     };
     
     return `Lectura de trabajo y vocación.
-Fecha: ${birthData.date} | Hora: ${birthData.time} | Género: ${birthData.gender}
-Posiciones: Sol ${getZodiacSign(chartData.sol)}, Saturno ${getZodiacSign(chartData.saturno)}, Mercurio ${getZodiacSign(chartData.mercurio)}
+Posiciones: Sol ${getZodiacSign(chartData.sol)}, Saturno ${getZodiacSign(chartData.saturno)}
 Extensión: 600-700 palabras`;
   },
 
@@ -165,26 +75,45 @@ Extensión: 600-700 palabras`;
       return signs[Math.floor(degrees / 30)];
     };
     
-    return `Lectura de salud holística (NO diagnosticar enfermedades).
-Fecha: ${birthData.date} | Género: ${birthData.gender}
-Posiciones: Sol ${getZodiacSign(chartData.sol)}, Luna ${getZodiacSign(chartData.luna)}, Saturno ${getZodiacSign(chartData.saturno)}
+    return `Lectura de salud holística.
+Posiciones: Sol ${getZodiacSign(chartData.sol)}, Luna ${getZodiacSign(chartData.luna)}
 Extensión: 600-700 palabras`;
   },
+
+  // NUEVO: Insight diario accionable
+  dailyInsight: (chartData, birthData) => {
+    const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
+                   'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
+    const getSignName = (degrees) => signs[Math.floor(degrees / 30)];
+    
+    const solSign = getSignName(chartData.sol);
+    const lunaSign = getSignName(chartData.luna);
+    
+    return `Genera un insight CORTO y ACCIONABLE para HOY basado en:
+- Sol en ${solSign}
+- Luna en ${lunaSign}
+- Fecha: ${birthData.date}
+
+Estructura OBLIGATORIA (máximo 150 palabras total):
+
+1. VALIDACIÓN (2 frases): Qué podrían estar sintiendo hoy
+2. CONTEXTO (1 frase): Por qué (posición lunar/planetaria)
+3. ACCIÓN (1 frase concreta): Qué hacer específicamente hoy
+
+Ejemplo:
+"Hoy podrías sentir más sensibilidad en lo emocional. La Luna transitando tu signo amplifica tus emociones. Tómate 5 minutos antes de responder algo importante."
+
+CRÍTICO: Debe ser ACCIONABLE, no solo descriptivo. Segunda persona. Máximo 150 palabras.`;
+  }
 };
 
-// [TODAS LAS FUNCIONES SE MANTIENEN IGUALES]
+// ========== FUNCIONES AUXILIARES (MANTENER) ==========
 const calculatePlanetaryPositions = async (birthDate, birthTime, city) => {
   try {
     const response = await fetch('/api/calculate-chart', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        date: birthDate,
-        time: birthTime,
-        city: city
-      }),
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ date: birthDate, time: birthTime, city: city }),
     });
 
     if (!response.ok) {
@@ -204,15 +133,12 @@ const getZodiacSign = (degrees) => {
   const signs = ['Aries', 'Tauro', 'Géminis', 'Cáncer', 'Leo', 'Virgo',
                  'Libra', 'Escorpio', 'Sagitario', 'Capricornio', 'Acuario', 'Piscis'];
   
-  if (degrees === undefined || degrees === null || isNaN(degrees)) {
-    return 'undefined';
-  }
+  if (degrees === undefined || degrees === null || isNaN(degrees)) return 'undefined';
   
   let normalizedDegrees = degrees % 360;
   if (normalizedDegrees < 0) normalizedDegrees += 360;
   
   const index = Math.floor(normalizedDegrees / 30);
-  
   return signs[index] || 'undefined';
 };
 
@@ -224,40 +150,55 @@ const getPlanetEmoji = (planet) => {
   return emojis[planet] || '●';
 };
 
+// ========== COMPONENTE PRINCIPAL ==========
 export default function Home() {
-  const [currentView, setCurrentView] = useState('home');
-  const [formData, setFormData] = useState({ date: '', time: '', city: '', gender: '' });
+  // Estados
+  const [currentView, setCurrentView] = useState('home'); // home, form, loading, wow, results
+  const [formData, setFormData] = useState({ date: '', time: '', city: '' });
+  const [userInfo, setUserInfo] = useState({ name: '', gender: '' }); // Se captura DESPUÉS
   const [chart, setChart] = useState(null);
+  const [dailyInsightText, setDailyInsightText] = useState(null);
   const [currentReading, setCurrentReading] = useState(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const [showPlanetDetails, setShowPlanetDetails] = useState(false);
-  const [isCalculating, setIsCalculating] = useState(false);
-  const [calculationError, setCalculationError] = useState(null);
   const [showCompatibility, setShowCompatibility] = useState(false);
-  const [compatibilityData, setCompatibilityData] = useState({
-    date: '',
-    time: '',
-    city: '',
-    gender: ''
-  });
+  const [compatibilityData, setCompatibilityData] = useState({ date: '', time: '', city: '', gender: '' });
   const [compatibilityResult, setCompatibilityResult] = useState(null);
   const [compatibilityTab, setCompatibilityTab] = useState('love');
 
+  // Handlers
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setIsCalculating(true);
-    setCalculationError(null);
+    setCurrentView('loading');
     
     try {
       const positions = await calculatePlanetaryPositions(formData.date, formData.time, formData.city);
       setChart(positions);
-      setCurrentView('results');
+      
+      // Generar insight diario
+      const insightPrompt = PROMPTS.dailyInsight(positions, formData);
+      const insightResponse = await fetch('/api/generate-reading', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: insightPrompt }),
+      });
+      
+      const insightData = await insightResponse.json();
+      setDailyInsightText(insightData.content);
+      
+      // Ir al WOW moment
+      setTimeout(() => {
+        setCurrentView('wow');
+      }, 2000);
+      
     } catch (error) {
-      setCalculationError(error.message);
-      alert(`Error: ${error.message}\n\nPor favor verifica que la ciudad esté escrita correctamente.`);
-    } finally {
-      setIsCalculating(false);
+      alert(`Error: ${error.message}`);
+      setCurrentView('form');
     }
+  };
+
+  const continueToResults = () => {
+    setCurrentView('results');
   };
 
   const generateReading = async (prompt, title) => {
@@ -276,17 +217,12 @@ export default function Home() {
         throw new Error(data.error || 'Error al generar lectura');
       }
 
-      setCurrentReading({
-        title,
-        content: data.content,
-        prompt
-      });
+      setCurrentReading({ title, content: data.content, prompt });
     } catch (error) {
       console.error('Error:', error);
       setCurrentReading({
         title,
-        content: 'Lo siento, hubo un error al generar la lectura. Por favor intenta nuevamente.',
-        prompt,
+        content: 'Lo siento, hubo un error. Por favor intenta nuevamente.',
         error: true
       });
     } finally {
@@ -296,26 +232,26 @@ export default function Home() {
 
   const generateDeepReading = (planet, degrees) => {
     if (degrees === undefined || degrees === null || isNaN(degrees)) {
-      alert('Error: No se pudo obtener la posición de ' + planet + '. Por favor intenta generar la carta nuevamente.');
+      alert('Error: No se pudo obtener la posición');
       return;
     }
     
     const sign = getZodiacSign(degrees);
     const degree = (degrees % 30).toFixed(1);
     const prompt = PROMPTS.deepReading(planet, sign, degree, formData);
-    generateReading(prompt, `Lectura Profunda: ${planet} en ${sign}`);
+    generateReading(prompt, `${planet} en ${sign}`);
   };
 
   const generateCompleteAnalysis = () => {
     const prompt = PROMPTS.completeAnalysis(chart, formData);
-    generateReading(prompt, 'Análisis Completo de tu Carta Natal');
+    generateReading(prompt, 'Análisis Completo');
   };
 
   const generateCategoryReading = (category) => {
     const titles = {
-      love: '💕 Lectura de Amor y Relaciones',
-      work: '💼 Lectura de Trabajo y Vocación',
-      health: '🌿 Lectura de Salud y Bienestar'
+      love: 'Amor y Relaciones',
+      work: 'Trabajo y Vocación',
+      health: 'Salud y Bienestar'
     };
     
     const prompts = {
@@ -402,15 +338,6 @@ export default function Home() {
     }
   };
 
-  const fillDemoData = () => {
-    setFormData({
-      date: '1990-09-20',
-      time: '14:30',
-      city: 'Santiago, Chile',
-      gender: 'Femenino'
-    });
-  };
-
   return (
     <>
       <Head>
@@ -419,119 +346,76 @@ export default function Home() {
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
       </Head>
 
-      {/* ESTILOS MINIMALISTAS */}
-      <style jsx global>{`
-        * {
-          margin: 0;
-          padding: 0;
-          box-sizing: border-box;
-        }
+      <div className={styles.container}>
         
-        body {
-          font-family: 'Inter', -apple-system, sans-serif;
-          -webkit-font-smoothing: antialiased;
-          background: #FFFFFF;
-          color: #000000;
-        }
-        
-        input, select {
-          -webkit-appearance: none;
-        }
-        
-        input:focus, select:focus {
-          outline: none;
-          border-color: #000000 !important;
-        }
-        
-        button:hover:not(:disabled) {
-          opacity: 0.8;
-        }
-      `}</style>
-
-      <div style={{ minHeight: '100vh', background: '#FFFFFF', color: '#000000', fontFamily: 'Inter, sans-serif' }}>
-        
-        {/* ===== HOMEPAGE ===== */}
+        {/* ===== HOME ===== */}
         {currentView === 'home' && (
-          <div style={{ maxWidth: '680px', margin: '0 auto', padding: '120px 24px 80px' }}>
-            
-            {/* Logo */}
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <h1 style={{ fontSize: '20px', fontWeight: 500, marginBottom: '60px', letterSpacing: '0.02em' }}>
-                Carta Astral
+          <div className={styles.pageContainer}>
+            <div className={styles.header}>
+              <div className={styles.logo}>Carta Astral</div>
+              
+              <h1 className={styles.headline}>
+                Entiende lo que te está pasando hoy.
               </h1>
               
-              <h2 style={{ fontSize: '42px', lineHeight: '1.2', fontWeight: 400, marginBottom: '24px', letterSpacing: '-0.02em' }}>
-                Tu carta astral, pero explicada como si alguien realmente te conociera.
-              </h2>
-              
-              <p style={{ fontSize: '18px', color: '#666666', lineHeight: '1.7', marginBottom: '48px' }}>
-                Ingresa tu fecha, hora y lugar de nacimiento y recibe una lectura clara, profunda y bajada a la vida real.
+              <p className={styles.subheadline}>
+                Ingresa tu fecha, hora y lugar de nacimiento y recibe una lectura clara y accionable.
               </p>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px', alignItems: 'center' }}>
+              <div className={styles.buttonGroup}>
                 <button
                   onClick={() => setCurrentView('form')}
-                  style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
+                  className={styles.buttonPrimary}
                 >
-                  Leer mi carta astral
-                </button>
-                
-                <button
-                  onClick={() => { fillDemoData(); setCurrentView('form'); }}
-                  style={{ padding: '14px 32px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
-                >
-                  Probar con ejemplo
+                  Comenzar
                 </button>
               </div>
             </div>
 
-            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+            <div className={styles.divider}></div>
 
             {/* Features */}
-            <div style={{ marginBottom: '80px' }}>
-              <h3 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '40px', textAlign: 'center' }}>
-                Qué vas a descubrir
-              </h3>
-
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '48px' }}>
+            <div className={styles.features}>
+              <h2 className={styles.featuresTitle}>Qué vas a descubrir</h2>
+              
+              <div className={styles.featuresList}>
                 {[
                   { emoji: '🌞', title: 'Tu esencia', desc: 'Lo que te mueve en profundidad.' },
-                  { emoji: '🌙', title: 'Tu mundo emocional', desc: 'Cómo sientes, qué necesitas y cómo te proteges.' },
-                  { emoji: '⬆️', title: 'Cómo te perciben', desc: 'La energía que proyectas sin darte cuenta.' },
-                  { emoji: '❤️', title: 'Amor y vínculos', desc: 'Cómo amas, qué buscas y qué te cuesta soltar.' },
-                  { emoji: '🔥', title: 'Energía y acción', desc: 'Cómo decides, avanzas y enfrentas conflicto.' },
-                  { emoji: '🧩', title: 'Tu tema central', desc: 'La tensión interna que más marca tu vida.' }
+                  { emoji: '🌙', title: 'Tu mundo emocional', desc: 'Cómo sientes y qué necesitas.' },
+                  { emoji: '⬆️', title: 'Cómo te perciben', desc: 'La energía que proyectas.' },
+                  { emoji: '❤️', title: 'Amor y vínculos', desc: 'Cómo amas y qué buscas.' },
+                  { emoji: '🔥', title: 'Energía y acción', desc: 'Cómo decides y avanzas.' },
+                  { emoji: '🧩', title: 'Tu tema central', desc: 'La tensión que más te marca.' }
                 ].map((item, i) => (
-                  <div key={i} style={{ paddingBottom: '48px', borderBottom: i < 5 ? '1px solid #F5F5F5' : 'none' }}>
-                    <div style={{ fontSize: '32px', marginBottom: '16px' }}>{item.emoji}</div>
-                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '8px' }}>{item.title}</h4>
-                    <p style={{ color: '#666666', lineHeight: '1.6' }}>{item.desc}</p>
+                  <div key={i} className={styles.feature}>
+                    <div className={styles.featureEmoji}>{item.emoji}</div>
+                    <h3 className={styles.featureTitle}>{item.title}</h3>
+                    <p className={styles.featureDesc}>{item.desc}</p>
                   </div>
                 ))}
               </div>
             </div>
 
-            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+            <div className={styles.divider}></div>
 
-            {/* Ejemplo */}
-            <div style={{ marginBottom: '80px' }}>
-              <div style={{ padding: '40px', background: '#F5F5F5', borderLeft: '4px solid #000000' }}>
-                <p style={{ fontSize: '20px', lineHeight: '1.7', color: '#000000', fontStyle: 'italic' }}>
-                  "Eres Libra, pero no solo buscas armonía. Hay en ti una necesidad profunda de construir vínculos justos, inteligentes y sostenibles. Con tu energía Capricornio, no te entregas fácil: observas, evalúas y eliges dónde poner tu energía."
-                </p>
-              </div>
-              <p style={{ fontSize: '14px', color: '#999999', marginTop: '16px', textAlign: 'center' }}>
-                Astrología sin humo. Lecturas claras, humanas y accionables.
+            {/* Example */}
+            <div className={styles.exampleBox}>
+              <p className={styles.exampleText}>
+                "Eres Libra, pero no solo buscas armonía. Hay en ti una necesidad profunda de construir vínculos justos, inteligentes y sostenibles."
               </p>
             </div>
+            <p className={styles.exampleCaption}>
+              Astrología sin humo. Lecturas claras y accionables.
+            </p>
 
-            <div style={{ textAlign: 'center' }}>
-              <h3 style={{ fontSize: '28px', fontWeight: 400, marginBottom: '16px' }}>
+            <div style={{ textAlign: 'center', marginTop: '80px' }}>
+              <h2 className={styles.headline} style={{ fontSize: '28px' }}>
                 A veces no necesitas cambiar.<br/>Solo entenderte mejor.
-              </h3>
+              </h2>
               <button
                 onClick={() => setCurrentView('form')}
-                style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', marginTop: '32px', fontFamily: 'inherit' }}
+                className={styles.buttonPrimary}
+                style={{ marginTop: '32px' }}
               >
                 Empezar mi lectura
               </button>
@@ -541,10 +425,10 @@ export default function Home() {
 
         {/* ===== FORM ===== */}
         {currentView === 'form' && (
-          <div style={{ maxWidth: '480px', margin: '0 auto', padding: '80px 24px' }}>
+          <div className={styles.pageContainerForm}>
             <button
               onClick={() => setCurrentView('home')}
-              style={{ background: 'transparent', border: 'none', color: '#000000', fontSize: '15px', cursor: 'pointer', marginBottom: '40px', fontFamily: 'inherit', padding: '8px 0' }}
+              className={styles.backButton}
             >
               ← Volver
             </button>
@@ -554,90 +438,117 @@ export default function Home() {
             </h1>
 
             <form onSubmit={handleSubmit}>
-              <div style={{ marginBottom: '32px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
-                  Fecha de nacimiento
-                </label>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Fecha de nacimiento</label>
                 <input
                   type="date"
                   value={formData.date}
                   onChange={(e) => setFormData({...formData, date: e.target.value})}
                   required
-                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
+                  className={styles.formInput}
                 />
               </div>
 
-              <div style={{ marginBottom: '32px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
-                  Hora de nacimiento
-                </label>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Hora de nacimiento</label>
                 <input
                   type="time"
                   value={formData.time}
                   onChange={(e) => setFormData({...formData, time: e.target.value})}
                   required
-                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
+                  className={styles.formInput}
                 />
+                <p style={{ fontSize: '14px', color: '#999999', marginTop: '8px' }}>
+                  Si no conoces tu hora exacta, usa 12:00
+                </p>
               </div>
 
-              <div style={{ marginBottom: '32px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
-                  Lugar de nacimiento
-                </label>
+              <div className={styles.formGroup}>
+                <label className={styles.formLabel}>Lugar de nacimiento</label>
                 <input
                   type="text"
                   value={formData.city}
                   onChange={(e) => setFormData({...formData, city: e.target.value})}
                   placeholder="Santiago, Chile"
                   required
-                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
+                  className={styles.formInput}
                 />
-              </div>
-
-              <div style={{ marginBottom: '32px' }}>
-                <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
-                  Género
-                </label>
-                <select
-                  value={formData.gender}
-                  onChange={(e) => setFormData({...formData, gender: e.target.value})}
-                  required
-                  style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
-                >
-                  <option value="">Selecciona...</option>
-                  <option value="Femenino">Femenino</option>
-                  <option value="Masculino">Masculino</option>
-                  <option value="No binario">No binario</option>
-                  <option value="Prefiero no decir">Prefiero no decir</option>
-                </select>
               </div>
 
               <button
                 type="submit"
-                disabled={isCalculating}
-                style={{ width: '100%', padding: '14px', background: isCalculating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isCalculating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+                className={styles.buttonPrimary}
+                style={{ width: '100%', marginTop: '24px' }}
               >
-                {isCalculating ? 'Calculando...' : 'Generar Carta Astral'}
+                Generar Carta Astral
               </button>
             </form>
           </div>
         )}
 
+        {/* ===== LOADING ===== */}
+        {currentView === 'loading' && (
+          <div className={styles.pageContainer}>
+            <div style={{ textAlign: 'center', paddingTop: '120px' }}>
+              <h2 style={{ fontSize: '24px', fontWeight: 400, marginBottom: '16px' }}>
+                Estamos preparando tu lectura personalizada...
+              </h2>
+              <p style={{ color: '#666666', fontSize: '16px' }}>
+                Esto tomará solo unos segundos
+              </p>
+            </div>
+          </div>
+        )}
+
+        {/* ===== WOW MOMENT ===== */}
+        {currentView === 'wow' && dailyInsightText && (
+          <div className={styles.pageContainer}>
+            <div style={{ textAlign: 'center', marginBottom: '60px' }}>
+              <h2 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '40px' }}>
+                Hoy para ti
+              </h2>
+              
+              <div style={{
+                padding: '40px',
+                background: '#F5F5F5',
+                borderLeft: '4px solid #000000',
+                textAlign: 'left',
+                marginBottom: '40px'
+              }}>
+                <p style={{ fontSize: '18px', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
+                  {dailyInsightText}
+                </p>
+              </div>
+
+              <p style={{ color: '#666666', marginBottom: '32px' }}>
+                Esto es solo una parte de tu carta
+              </p>
+
+              <button
+                onClick={continueToResults}
+                className={styles.buttonPrimary}
+              >
+                Ver más sobre ti →
+              </button>
+            </div>
+          </div>
+        )}
+
         {/* ===== RESULTS ===== */}
-        {currentView === 'results' && (
-          <div style={{ maxWidth: '680px', margin: '0 auto', padding: '80px 24px' }}>
+        {currentView === 'results' && chart && (
+          <div className={styles.pageContainer}>
             
             {/* Big 3 */}
-            <div style={{ textAlign: 'center', marginBottom: '80px' }}>
-              <div style={{ display: 'flex', justifyContent: 'center', gap: '48px', marginBottom: '48px', flexWrap: 'wrap' }}>
+            <div className={styles.big3Container}>
+              <div className={styles.big3Grid}>
                 {[
                   { planet: 'sol', label: 'Sol' },
                   { planet: 'luna', label: 'Luna' },
                   { planet: 'ascendente', label: 'Asc' }
                 ].map(({ planet, label }) => (
-                  <div key={planet}>
-                    <div style={{ fontSize: '14px', color: '#999999', marginBottom: '8px' }}>{label}</div>
-                    <div style={{ fontSize: '24px', fontWeight: 500 }}>
+                  <div key={planet} className={styles.big3Item}>
+                    <div className={styles.big3Label}>{label}</div>
+                    <div className={styles.big3Value}>
                       {getZodiacSign(chart[planet])}
                     </div>
                   </div>
@@ -647,21 +558,19 @@ export default function Home() {
               <button
                 onClick={generateCompleteAnalysis}
                 disabled={isGenerating}
-                style={{ padding: '14px 32px', background: isGenerating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
+                className={styles.buttonPrimary}
               >
                 {isGenerating ? 'Generando...' : 'Ver análisis completo'}
               </button>
             </div>
 
-            <div style={{ height: '1px', background: '#E5E5E5', margin: '80px 0' }} />
+            <div className={styles.divider}></div>
 
             {/* Temas */}
-            <div style={{ marginBottom: '80px' }}>
-              <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '48px', textAlign: 'center' }}>
-                O explora por temas
-              </h2>
+            <div>
+              <h2 className={styles.featuresTitle}>O explora por temas</h2>
 
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+              <div className={styles.themesList}>
                 {[
                   { key: 'love', emoji: '❤️', title: 'Amor y vínculos' },
                   { key: 'work', emoji: '💼', title: 'Trabajo y propósito' },
@@ -671,182 +580,176 @@ export default function Home() {
                     key={key}
                     onClick={() => generateCategoryReading(key)}
                     disabled={isGenerating}
-                    style={{ padding: '24px', background: '#FFFFFF', border: '1px solid #DDDDDD', textAlign: 'left', cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit', display: 'flex', alignItems: 'center', gap: '16px' }}
+                    className={styles.themeButton}
                   >
-                    <span style={{ fontSize: '28px' }}>{emoji}</span>
-                    <span style={{ fontSize: '18px', fontWeight: 500 }}>{title}</span>
+                    <span className={styles.themeEmoji}>{emoji}</span>
+                    <span className={styles.themeTitle}>{title}</span>
                   </button>
                 ))}
               </div>
             </div>
 
+            <div className={styles.divider}></div>
+
             {/* Compatibilidad */}
-            <div style={{ marginBottom: '80px' }}>
-              <div style={{ padding: '40px', background: '#F5F5F5', textAlign: 'center' }}>
-                <h3 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '16px' }}>
-                  Analiza compatibilidad
-                </h3>
-                <p style={{ color: '#666666', marginBottom: '32px' }}>
-                  Descubre la dinámica con otra persona
-                </p>
-                
-                {!showCompatibility && (
-                  <button
-                    onClick={() => setShowCompatibility(true)}
-                    style={{ padding: '14px 32px', background: '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
-                  >
-                    Analizar compatibilidad
-                  </button>
-                )}
+            <div className={styles.compatBox}>
+              <h3 className={styles.compatTitle}>Analiza compatibilidad</h3>
+              <p className={styles.compatDesc}>
+                Descubre la dinámica con otra persona
+              </p>
+              
+              {!showCompatibility && (
+                <button
+                  onClick={() => setShowCompatibility(true)}
+                  className={styles.buttonPrimary}
+                >
+                  Analizar compatibilidad
+                </button>
+              )}
 
-                {showCompatibility && !compatibilityResult && (
-                  <div style={{ background: '#FFFFFF', padding: '32px', marginTop: '32px', textAlign: 'left' }}>
-                    <h4 style={{ fontSize: '18px', fontWeight: 500, marginBottom: '24px' }}>
-                      Datos de la otra persona
-                    </h4>
+              {showCompatibility && !compatibilityResult && (
+                <div className={styles.compatForm}>
+                  <h4 className={styles.compatFormTitle}>
+                    Datos de la otra persona
+                  </h4>
 
-                    <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
-                      <div>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500 }}>
-                          Fecha de nacimiento
-                        </label>
-                        <input
-                          type="date"
-                          value={compatibilityData.date}
-                          onChange={(e) => setCompatibilityData({...compatibilityData, date: e.target.value})}
-                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
-                          Hora de nacimiento
-                        </label>
-                        <input
-                          type="time"
-                          value={compatibilityData.time}
-                          onChange={(e) => setCompatibilityData({...compatibilityData, time: e.target.value})}
-                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
-                          Ciudad de nacimiento
-                        </label>
-                        <input
-                          type="text"
-                          value={compatibilityData.city}
-                          onChange={(e) => setCompatibilityData({...compatibilityData, city: e.target.value})}
-                          placeholder="Santiago, Chile"
-                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
-                        />
-                      </div>
-
-                      <div>
-                        <label style={{ display: 'block', marginBottom: '8px', fontSize: '14px', fontWeight: 500' }}>
-                          Género
-                        </label>
-                        <select
-                          value={compatibilityData.gender}
-                          onChange={(e) => setCompatibilityData({...compatibilityData, gender: e.target.value})}
-                          style={{ width: '100%', padding: '12px', border: '1px solid #DDDDDD', fontSize: '16px', fontFamily: 'inherit' }}
-                        >
-                          <option value="">Seleccionar...</option>
-                          <option value="Femenino">Femenino</option>
-                          <option value="Masculino">Masculino</option>
-                          <option value="No binario">No binario</option>
-                          <option value="Prefiero no decir">Prefiero no decir</option>
-                        </select>
-                      </div>
-
-                      <div style={{ display: 'flex', gap: '16px' }}>
-                        <button
-                          onClick={analyzeCompatibility}
-                          disabled={isGenerating}
-                          style={{ flex: 1, padding: '14px', background: isGenerating ? '#CCCCCC' : '#000000', border: 'none', color: '#FFFFFF', fontSize: '15px', fontWeight: 500, cursor: isGenerating ? 'wait' : 'pointer', fontFamily: 'inherit' }}
-                        >
-                          {isGenerating ? 'Analizando...' : 'Analizar'}
-                        </button>
-                        <button
-                          onClick={() => { setShowCompatibility(false); setCompatibilityData({ date: '', time: '', city: '', gender: '' }); }}
-                          style={{ padding: '14px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '15px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
-                        >
-                          Cancelar
-                        </button>
-                      </div>
-                    </div>
-                  </div>
-                )}
-
-                {compatibilityResult && (
-                  <div style={{ marginTop: '32px', textAlign: 'left' }}>
-                    <div style={{ display: 'flex', gap: '16px', marginBottom: '24px', flexWrap: 'wrap', justifyContent: 'center' }}>
-                      {[
-                        { key: 'love', label: 'Amor' },
-                        { key: 'friendship', label: 'Amistad' },
-                        { key: 'work', label: 'Trabajo' }
-                      ].map(({ key, label }) => (
-                        <button
-                          key={key}
-                          onClick={() => setCompatibilityTab(key)}
-                          style={{ padding: '12px 24px', background: compatibilityTab === key ? '#000000' : 'transparent', border: `1px solid #000000`, color: compatibilityTab === key ? '#FFFFFF' : '#000000', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
-                        >
-                          {label}
-                        </button>
-                      ))}
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '24px' }}>
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Fecha de nacimiento</label>
+                      <input
+                        type="date"
+                        value={compatibilityData.date}
+                        onChange={(e) => setCompatibilityData({...compatibilityData, date: e.target.value})}
+                        className={styles.formInput}
+                      />
                     </div>
 
-                    <div style={{ background: '#FFFFFF', padding: '32px', fontSize: '16px', lineHeight: '1.7', whiteSpace: 'pre-wrap' }}>
-                      {compatibilityResult[compatibilityTab]}
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Hora de nacimiento</label>
+                      <input
+                        type="time"
+                        value={compatibilityData.time}
+                        onChange={(e) => setCompatibilityData({...compatibilityData, time: e.target.value})}
+                        className={styles.formInput}
+                      />
                     </div>
 
-                    <div style={{ textAlign: 'center', marginTop: '24px' }}>
-                      <button
-                        onClick={() => { setShowCompatibility(false); setCompatibilityResult(null); setCompatibilityData({ date: '', time: '', city: '', gender: '' }); setCompatibilityTab('love'); }}
-                        style={{ padding: '12px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', fontSize: '14px', fontWeight: 500, cursor: 'pointer', fontFamily: 'inherit' }}
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Ciudad de nacimiento</label>
+                      <input
+                        type="text"
+                        value={compatibilityData.city}
+                        onChange={(e) => setCompatibilityData({...compatibilityData, city: e.target.value})}
+                        placeholder="Santiago, Chile"
+                        className={styles.formInput}
+                      />
+                    </div>
+
+                    <div className={styles.formGroup}>
+                      <label className={styles.formLabel}>Género</label>
+                      <select
+                        value={compatibilityData.gender}
+                        onChange={(e) => setCompatibilityData({...compatibilityData, gender: e.target.value})}
+                        className={styles.formInput}
                       >
-                        Hacer otro análisis
+                        <option value="">Seleccionar...</option>
+                        <option value="Femenino">Femenino</option>
+                        <option value="Masculino">Masculino</option>
+                        <option value="No binario">No binario</option>
+                      </select>
+                    </div>
+
+                    <div style={{ display: 'flex', gap: '16px' }}>
+                      <button
+                        onClick={analyzeCompatibility}
+                        disabled={isGenerating}
+                        className={styles.buttonPrimary}
+                        style={{ flex: 1 }}
+                      >
+                        {isGenerating ? 'Analizando...' : 'Analizar'}
+                      </button>
+                      <button
+                        onClick={() => {
+                          setShowCompatibility(false);
+                          setCompatibilityData({ date: '', time: '', city: '', gender: '' });
+                        }}
+                        className={styles.buttonSecondary}
+                      >
+                        Cancelar
                       </button>
                     </div>
                   </div>
-                )}
-              </div>
+                </div>
+              )}
+
+              {compatibilityResult && (
+                <div style={{ marginTop: '32px' }}>
+                  <div className={styles.compatTabs}>
+                    {[
+                      { key: 'love', label: 'Amor' },
+                      { key: 'friendship', label: 'Amistad' },
+                      { key: 'work', label: 'Trabajo' }
+                    ].map(({ key, label }) => (
+                      <button
+                        key={key}
+                        onClick={() => setCompatibilityTab(key)}
+                        className={`${styles.compatTab} ${compatibilityTab === key ? styles.compatTabActive : ''}`}
+                      >
+                        {label}
+                      </button>
+                    ))}
+                  </div>
+
+                  <div className={styles.compatContent}>
+                    {compatibilityResult[compatibilityTab]}
+                  </div>
+
+                  <div style={{ textAlign: 'center', marginTop: '24px' }}>
+                    <button
+                      onClick={() => {
+                        setShowCompatibility(false);
+                        setCompatibilityResult(null);
+                        setCompatibilityData({ date: '', time: '', city: '', gender: '' });
+                        setCompatibilityTab('love');
+                      }}
+                      className={styles.buttonSecondary}
+                    >
+                      Hacer otro análisis
+                    </button>
+                  </div>
+                </div>
+              )}
             </div>
 
             {/* Planetas */}
-            <div style={{ marginBottom: '80px' }}>
+            <div>
               <button
                 onClick={() => setShowPlanetDetails(!showPlanetDetails)}
-                style={{ width: '100%', padding: '16px', background: 'transparent', border: '1px solid #DDDDDD', cursor: 'pointer', fontSize: '15px', fontFamily: 'inherit', fontWeight: 500 }}
+                className={styles.planetsToggle}
               >
                 {showPlanetDetails ? '▼ Ocultar planetas' : '▶ Ver todos los planetas'}
               </button>
 
               {showPlanetDetails && (
-                <div style={{ marginTop: '32px', display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px, 1fr))', gap: '24px' }}>
+                <div className={styles.planetsGrid}>
                   {Object.entries(chart).map(([planet, degrees]) => {
                     const sign = getZodiacSign(degrees);
                     const deg = (degrees % 30).toFixed(1);
                     
                     return (
-                      <div key={planet} style={{ border: '1px solid #E5E5E5', padding: '24px' }}>
-                        <div style={{ textAlign: 'center', marginBottom: '16px' }}>
-                          <div style={{ fontSize: '32px', marginBottom: '8px' }}>
-                            {getPlanetEmoji(planet)}
-                          </div>
-                          <h3 style={{ fontSize: '16px', fontWeight: 500, textTransform: 'capitalize', marginBottom: '4px' }}>
-                            {planet}
-                          </h3>
-                          <p style={{ fontSize: '14px', color: '#666666' }}>
-                            {sign} {deg}°
-                          </p>
+                      <div key={planet} className={styles.planetCard}>
+                        <div className={styles.planetEmoji}>
+                          {getPlanetEmoji(planet)}
                         </div>
+                        <h3 className={styles.planetName}>{planet}</h3>
+                        <p className={styles.planetPosition}>
+                          {sign} {deg}°
+                        </p>
                         
                         <button
                           onClick={() => generateDeepReading(planet, degrees)}
                           disabled={isGenerating}
-                          style={{ width: '100%', padding: '10px', background: 'transparent', border: '1px solid #000000', color: '#000000', cursor: isGenerating ? 'wait' : 'pointer', fontSize: '13px', fontFamily: 'inherit', fontWeight: 500 }}
+                          className={styles.planetButton}
                         >
                           {isGenerating ? 'Generando...' : 'Ver lectura'}
                         </button>
@@ -857,11 +760,10 @@ export default function Home() {
               )}
             </div>
 
-            {/* Volver */}
-            <div style={{ textAlign: 'center' }}>
+            <div style={{ textAlign: 'center', marginTop: '80px' }}>
               <button
                 onClick={() => setCurrentView('home')}
-                style={{ padding: '12px 24px', background: 'transparent', border: '1px solid #000000', color: '#000000', cursor: 'pointer', fontSize: '14px', fontFamily: 'inherit', fontWeight: 500 }}
+                className={styles.buttonSecondary}
               >
                 ← Volver al inicio
               </button>
@@ -873,29 +775,29 @@ export default function Home() {
         {currentReading && (
           <div
             onClick={() => setCurrentReading(null)}
-            style={{ position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, background: 'rgba(0, 0, 0, 0.9)', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px', zIndex: 1000 }}
+            className={styles.modal}
           >
             <div
               onClick={(e) => e.stopPropagation()}
-              style={{ maxWidth: '680px', width: '100%', maxHeight: '90vh', background: '#FFFFFF', padding: '48px', overflow: 'auto', position: 'relative' }}
+              className={styles.modalContent}
             >
               <button
                 onClick={() => setCurrentReading(null)}
-                style={{ position: 'absolute', top: '24px', right: '24px', background: 'transparent', border: 'none', fontSize: '24px', cursor: 'pointer', width: '32px', height: '32px', padding: 0 }}
+                className={styles.modalClose}
               >
                 ✕
               </button>
 
-              <h2 style={{ fontSize: '24px', fontWeight: 500, marginBottom: '32px' }}>
+              <h2 className={styles.modalTitle}>
                 {currentReading.title}
               </h2>
 
               {isGenerating ? (
-                <div style={{ textAlign: 'center', padding: '40px' }}>
-                  <p style={{ color: '#666666' }}>Generando lectura...</p>
+                <div className={styles.loading}>
+                  <p>Generando lectura...</p>
                 </div>
               ) : (
-                <div style={{ fontSize: '16px', lineHeight: '1.7', color: '#000000', whiteSpace: 'pre-wrap' }}>
+                <div className={styles.modalBody}>
                   {currentReading.content}
                 </div>
               )}
