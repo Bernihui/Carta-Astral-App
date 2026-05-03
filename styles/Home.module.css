@@ -157,7 +157,7 @@
   align-items: center;
 }
 
-/* DIVIDER con elemento zodiacal */
+/* DIVIDER */
 .divider {
   height: 1px;
   background: linear-gradient(90deg, transparent, rgba(139, 92, 246, 0.3), transparent);
@@ -232,7 +232,7 @@
   line-height: 1.6;
 }
 
-/* EXAMPLE con círculo zodiacal */
+/* EXAMPLE */
 .exampleBox {
   padding: 40px;
   background: linear-gradient(135deg, rgba(139, 92, 246, 0.1), rgba(236, 72, 153, 0.1));
@@ -674,22 +674,4 @@
   .pageContainer {
     padding: 80px 20px 60px;
   }
-}
-
-/* Scrollbar personalizado */
-::-webkit-scrollbar {
-  width: 10px;
-}
-
-::-webkit-scrollbar-track {
-  background: rgba(10, 14, 39, 0.5);
-}
-
-::-webkit-scrollbar-thumb {
-  background: linear-gradient(135deg, #8B5CF6, #EC4899);
-  border-radius: 5px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: linear-gradient(135deg, #A78BFA, #F472B6);
 }
