@@ -1,53 +1,8 @@
-// pages/index.js - CON LOGO LUMINA
+// pages/index.js - CON LOGO REAL DE LUMINA
 import { useState } from 'react';
 import Head from 'next/head';
+import Image from 'next/image';
 import styles from '../styles/Home.module.css';
-
-// ========== LOGO LUMINA SVG ==========
-const LuminaLogo = ({ size = 40, showText = true, textSize = 18 }) => (
-  <div style={{ display: 'flex', alignItems: 'center', gap: '12px', justifyContent: 'center' }}>
-    <svg width={size} height={size} viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-      <defs>
-        <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
-          <stop offset="0%" style={{ stopColor: '#8B5CF6', stopOpacity: 1 }} />
-          <stop offset="50%" style={{ stopColor: '#A78BFA', stopOpacity: 1 }} />
-          <stop offset="100%" style={{ stopColor: '#67E8F9', stopOpacity: 1 }} />
-        </linearGradient>
-      </defs>
-      
-      {/* Forma orgánica externa */}
-      <path
-        d="M50 10 C30 10, 15 25, 15 45 C15 55, 20 65, 30 70 C35 72, 40 75, 45 80 C47 83, 48 88, 50 90 C52 88, 53 83, 55 80 C60 75, 65 72, 70 70 C80 65, 85 55, 85 45 C85 25, 70 10, 50 10 Z"
-        fill="none"
-        stroke="url(#logoGradient)"
-        strokeWidth="3"
-        strokeLinecap="round"
-      />
-      
-      {/* Estrella central */}
-      <g transform="translate(50, 50)">
-        <line x1="0" y1="-15" x2="0" y2="15" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
-        <line x1="-15" y1="0" x2="15" y2="0" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
-        <line x1="-11" y1="-11" x2="11" y2="11" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
-        <line x1="11" y1="-11" x2="-11" y2="11" stroke="url(#logoGradient)" strokeWidth="3" strokeLinecap="round" />
-      </g>
-    </svg>
-    
-    {showText && (
-      <span style={{
-        fontSize: `${textSize}px`,
-        fontWeight: 500,
-        letterSpacing: '0.1em',
-        background: 'linear-gradient(90deg, #A78BFA, #67E8F9)',
-        WebkitBackgroundClip: 'text',
-        WebkitTextFillColor: 'transparent',
-        backgroundClip: 'text'
-      }}>
-        lumina
-      </span>
-    )}
-  </div>
-);
 
 // ========== SISTEMA DE PROMPTS (MANTENER IGUAL) ==========
 const PROMPTS = {
@@ -384,6 +339,7 @@ export default function Home() {
       <Head>
         <title>Lumina - Ilumina tu camino</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
+        <link rel="icon" href="/logo-lumina.png" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet" />
       </Head>
 
@@ -394,7 +350,7 @@ export default function Home() {
           <div className={styles.pageContainer}>
             <div className={styles.header}>
               <div className={styles.logo}>
-                <LuminaLogo size={50} showText={true} textSize={20} />
+                <img src="/logo-lumina.png" alt="Lumina" style={{ height: '60px', width: 'auto' }} />
               </div>
               
               <h1 className={styles.headline}>
@@ -475,7 +431,7 @@ export default function Home() {
             </button>
 
             <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-              <LuminaLogo size={40} showText={true} textSize={18} />
+              <img src="/logo-lumina.png" alt="Lumina" style={{ height: '50px', width: 'auto' }} />
             </div>
 
             <h1 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '48px', textAlign: 'center' }}>
@@ -536,7 +492,7 @@ export default function Home() {
           <div className={styles.pageContainer}>
             <div style={{ textAlign: 'center', paddingTop: '120px' }}>
               <div style={{ marginBottom: '40px' }}>
-                <LuminaLogo size={60} showText={false} />
+                <img src="/logo-lumina.png" alt="Lumina" style={{ height: '80px', width: 'auto', opacity: 0.8 }} />
               </div>
               <h2 style={{ fontSize: '24px', fontWeight: 400, marginBottom: '16px' }}>
                 Estamos preparando tu lectura personalizada...
@@ -553,7 +509,7 @@ export default function Home() {
           <div className={styles.pageContainer}>
             <div style={{ textAlign: 'center', marginBottom: '60px' }}>
               <div style={{ marginBottom: '40px' }}>
-                <LuminaLogo size={50} showText={true} textSize={18} />
+                <img src="/logo-lumina.png" alt="Lumina" style={{ height: '50px', width: 'auto' }} />
               </div>
               
               <h2 style={{ fontSize: '32px', fontWeight: 500, marginBottom: '40px' }}>
@@ -642,7 +598,6 @@ export default function Home() {
 
             <div className={styles.divider}></div>
 
-            {/* Compatibilidad */}
             <div className={styles.compatBox}>
               <h3 className={styles.compatTitle}>Analiza compatibilidad</h3>
               <p className={styles.compatDesc}>
@@ -772,7 +727,6 @@ export default function Home() {
               )}
             </div>
 
-            {/* Planetas */}
             <div>
               <button
                 onClick={() => setShowPlanetDetails(!showPlanetDetails)}
@@ -845,7 +799,7 @@ export default function Home() {
 
               {isGenerating ? (
                 <div className={styles.loading}>
-                  <LuminaLogo size={40} showText={false} />
+                  <img src="/logo-lumina.png" alt="Lumina" style={{ height: '40px', width: 'auto', opacity: 0.6 }} />
                   <p style={{ marginTop: '20px' }}>Generando lectura...</p>
                 </div>
               ) : (
