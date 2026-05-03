@@ -1,0 +1,484 @@
+/* DISEÑO MINIMALISTA - CARTA ASTRAL */
+
+.container {
+  min-height: 100vh;
+  background: #FFFFFF;
+  color: #000000;
+  font-family: 'Inter', -apple-system, sans-serif;
+}
+
+.pageContainer {
+  max-width: 680px;
+  margin: 0 auto;
+  padding: 120px 24px 80px;
+}
+
+.pageContainerForm {
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 80px 24px;
+}
+
+/* HEADER */
+.header {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.logo {
+  font-size: 20px;
+  font-weight: 500;
+  margin-bottom: 60px;
+  letter-spacing: 0.02em;
+}
+
+.headline {
+  font-size: 42px;
+  line-height: 1.2;
+  font-weight: 400;
+  margin-bottom: 24px;
+  letter-spacing: -0.02em;
+}
+
+.subheadline {
+  font-size: 18px;
+  color: #666666;
+  line-height: 1.7;
+  margin-bottom: 48px;
+}
+
+/* BUTTONS */
+.buttonPrimary {
+  padding: 14px 32px;
+  background: #000000;
+  border: none;
+  color: #FFFFFF;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.buttonPrimary:hover:not(:disabled) {
+  opacity: 0.8;
+}
+
+.buttonPrimary:disabled {
+  background: #CCCCCC;
+  cursor: wait;
+}
+
+.buttonSecondary {
+  padding: 14px 32px;
+  background: transparent;
+  border: 1px solid #000000;
+  color: #000000;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.buttonSecondary:hover {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.buttonGroup {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  align-items: center;
+}
+
+/* DIVIDER */
+.divider {
+  height: 1px;
+  background: #E5E5E5;
+  margin: 80px 0;
+}
+
+/* FEATURES */
+.features {
+  margin-bottom: 80px;
+}
+
+.featuresTitle {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 40px;
+  text-align: center;
+}
+
+.featuresList {
+  display: flex;
+  flex-direction: column;
+  gap: 48px;
+}
+
+.feature {
+  padding-bottom: 48px;
+  border-bottom: 1px solid #F5F5F5;
+}
+
+.feature:last-child {
+  border-bottom: none;
+}
+
+.featureEmoji {
+  font-size: 32px;
+  margin-bottom: 16px;
+}
+
+.featureTitle {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 8px;
+}
+
+.featureDesc {
+  color: #666666;
+  line-height: 1.6;
+}
+
+/* EXAMPLE */
+.exampleBox {
+  padding: 40px;
+  background: #F5F5F5;
+  border-left: 4px solid #000000;
+  margin-bottom: 80px;
+}
+
+.exampleText {
+  font-size: 20px;
+  line-height: 1.7;
+  color: #000000;
+  font-style: italic;
+}
+
+.exampleCaption {
+  font-size: 14px;
+  color: #999999;
+  margin-top: 16px;
+  text-align: center;
+}
+
+/* FORM */
+.formGroup {
+  margin-bottom: 32px;
+}
+
+.formLabel {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 14px;
+  font-weight: 500;
+}
+
+.formInput {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #DDDDDD;
+  font-size: 16px;
+  font-family: inherit;
+}
+
+.formInput:focus {
+  outline: none;
+  border-color: #000000;
+}
+
+.backButton {
+  background: transparent;
+  border: none;
+  color: #000000;
+  font-size: 15px;
+  cursor: pointer;
+  margin-bottom: 40px;
+  font-family: inherit;
+  padding: 8px 0;
+}
+
+.backButton:hover {
+  opacity: 0.6;
+}
+
+/* RESULTS */
+.big3Container {
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.big3Grid {
+  display: flex;
+  justify-content: center;
+  gap: 48px;
+  margin-bottom: 48px;
+  flex-wrap: wrap;
+}
+
+.big3Item {
+  text-align: center;
+}
+
+.big3Label {
+  font-size: 14px;
+  color: #999999;
+  margin-bottom: 8px;
+}
+
+.big3Value {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+/* THEMES */
+.themesList {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+  margin-bottom: 80px;
+}
+
+.themeButton {
+  padding: 24px;
+  background: #FFFFFF;
+  border: 1px solid #DDDDDD;
+  text-align: left;
+  cursor: pointer;
+  font-family: inherit;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.themeButton:hover:not(:disabled) {
+  border-color: #000000;
+}
+
+.themeButton:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+.themeEmoji {
+  font-size: 28px;
+}
+
+.themeTitle {
+  font-size: 18px;
+  font-weight: 500;
+}
+
+/* COMPATIBILITY */
+.compatBox {
+  padding: 40px;
+  background: #F5F5F5;
+  text-align: center;
+  margin-bottom: 80px;
+}
+
+.compatTitle {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 16px;
+}
+
+.compatDesc {
+  color: #666666;
+  margin-bottom: 32px;
+}
+
+.compatForm {
+  background: #FFFFFF;
+  padding: 32px;
+  margin-top: 32px;
+  text-align: left;
+}
+
+.compatFormTitle {
+  font-size: 18px;
+  font-weight: 500;
+  margin-bottom: 24px;
+}
+
+.compatTabs {
+  display: flex;
+  gap: 16px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.compatTab {
+  padding: 12px 24px;
+  background: transparent;
+  border: 1px solid #000000;
+  color: #000000;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.compatTabActive {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.compatContent {
+  background: #FFFFFF;
+  padding: 32px;
+  font-size: 16px;
+  line-height: 1.7;
+  white-space: pre-wrap;
+}
+
+/* PLANETS */
+.planetsToggle {
+  width: 100%;
+  padding: 16px;
+  background: transparent;
+  border: 1px solid #DDDDDD;
+  cursor: pointer;
+  font-size: 15px;
+  font-family: inherit;
+  font-weight: 500;
+  margin-bottom: 80px;
+}
+
+.planetsToggle:hover {
+  background: #F5F5F5;
+}
+
+.planetsGrid {
+  margin-top: 32px;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 24px;
+  margin-bottom: 80px;
+}
+
+.planetCard {
+  border: 1px solid #E5E5E5;
+  padding: 24px;
+}
+
+.planetEmoji {
+  font-size: 32px;
+  margin-bottom: 8px;
+  text-align: center;
+}
+
+.planetName {
+  font-size: 16px;
+  font-weight: 500;
+  text-transform: capitalize;
+  margin-bottom: 4px;
+  text-align: center;
+}
+
+.planetPosition {
+  font-size: 14px;
+  color: #666666;
+  text-align: center;
+  margin-bottom: 16px;
+}
+
+.planetButton {
+  width: 100%;
+  padding: 10px;
+  background: transparent;
+  border: 1px solid #000000;
+  color: #000000;
+  cursor: pointer;
+  font-size: 13px;
+  font-family: inherit;
+  font-weight: 500;
+}
+
+.planetButton:hover:not(:disabled) {
+  background: #000000;
+  color: #FFFFFF;
+}
+
+.planetButton:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+/* MODAL */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.9);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  z-index: 1000;
+}
+
+.modalContent {
+  max-width: 680px;
+  width: 100%;
+  max-height: 90vh;
+  background: #FFFFFF;
+  padding: 48px;
+  overflow: auto;
+  position: relative;
+}
+
+.modalClose {
+  position: absolute;
+  top: 24px;
+  right: 24px;
+  background: transparent;
+  border: none;
+  font-size: 24px;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+}
+
+.modalTitle {
+  font-size: 24px;
+  font-weight: 500;
+  margin-bottom: 32px;
+}
+
+.modalBody {
+  font-size: 16px;
+  line-height: 1.7;
+  color: #000000;
+  white-space: pre-wrap;
+}
+
+.loading {
+  text-align: center;
+  padding: 40px;
+  color: #666666;
+}
+
+/* RESPONSIVE */
+@media (max-width: 768px) {
+  .headline {
+    font-size: 32px;
+  }
+  
+  .big3Grid {
+    gap: 32px;
+  }
+  
+  .modalContent {
+    padding: 32px;
+  }
+  
+  .pageContainer {
+    padding: 80px 20px 60px;
+  }
+}
